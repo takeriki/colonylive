@@ -1,0 +1,22 @@
+$def with (title, script='')
+<html>
+<head>
+<title>$title</title>
+<link rel="stylesheet" href="/static/styles/navi.css" type="text/css" />
+
+$if script != '':
+	<script type='text/javascript'>
+	<!--
+	$:script
+	-->
+	</script>
+</head>
+
+<ul id="gNavi">
+	<li><a href='/monitor'>Monitor</a></li>
+	<li><a href='/exp_reg'>ExpReg</a></li>
+	<li><a href='/reg_manage'>RegManage</a></li>
+	<!--<li><a href='/disp_img'>DispImage</a></li>-->
+	<li><a href='/logout'>Logout</a></li>
+</ul>
+<hr>

@@ -1,0 +1,50 @@
+$def with (error='')
+
+<html>
+<head>
+<title>Login to scan system</title>
+</head>
+
+<body onLoad="document.login.user.focus()">
+
+<h2>Colony-live -- v$session.version</h2>
+
+$if error != '':
+	<p style="color:red">Error: $error</p>
+
+<FORM action=/login method=POST name=login>
+    <table id="login">
+        <tr>
+            <td>User: </td>
+            <td><input type=text name='user'></td>
+        </tr>
+        <tr>
+            <td>Password: </td>
+            <td><input type="password" name=passwd></td>
+        </tr>
+        <tr>
+            <td></td>
+            <td><input type=submit value=LOGIN></td>
+        </tr>
+    </table>
+</form>
+
+<br>
+<br>
+<br>
+<br>
+
+<a href="/user_reg">Get new account</a>
+
+<br>
+<br>
+
+------
+
+<br>
+
+Go to <a href="http://ecoli.naist.jp/colonylive/">Official site</a>
+
+
+</body>
+</html>

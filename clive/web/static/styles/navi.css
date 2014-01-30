@@ -1,0 +1,41 @@
+#gNavi { margin:0; padding:0 10px; line-height:30px; }  
+#gNavi li { display:inline; list-style:none; padding-right:20px; }  
+#gNavi li a {  
+	color:black;  
+	text-decoration:none;  
+}  
+#gNavi li a:hover { color:#f00; border-bottom:solid 3px #f00; }
+
+table.sample{
+    border-top:1px solid #663300;
+    border-left:1px solid #663300;
+    border-collapse:collapse;
+    border-spacing:0;
+    background-color:#ffffff;
+    empty-cells:show;
+}
+.sample th{
+    border-right:1px solid #663300;
+    border-bottom:1px solid #663300;
+    color:#330000;
+    background-color:#996633;
+    background-position:left top;
+    padding:0.3em 1em;
+    text-align:center;
+}
+.sample td{
+    border-right:1px solid #663300;
+    border-bottom:1px solid #663300;
+    padding:0.3em 1em;
+}
+
+table.scanner {
+border: 1px #2b2b2b solid;
+}
+
+.scanner td, th {
+padding: 10px 15px;
+font-size: 120%;
+text-align: center;
+}
+

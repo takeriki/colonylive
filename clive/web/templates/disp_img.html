@@ -1,0 +1,17 @@
+$def with (title, pict_path, error='')
+
+$:render.header(title)
+
+$if error:
+	<h3 style="color:red"> Error: $error </h3>
+
+<h2>Display image</h2>
+
+<FORM action=/disp_img method=POST>
+<p>pict id: <input type=text name='pict_id' size=10>
+<input type=submit value="SHOW"></p>
+</form>
+
+<img src="$pict_path" height=600, width=800>
+
+$:render.footer()

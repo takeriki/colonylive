@@ -1,0 +1,5 @@
+syntax: glob
+input/*
+output/*
+*.pyc
+.DS_Store

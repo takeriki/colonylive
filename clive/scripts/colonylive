@@ -1,0 +1,16 @@
+#!/usr/bin/python
+
+import sys
+import getpass
+import numpy as np
+
+#from clive.analysis.process import 
+
+from optparse import OptionParser
+
+usage="%prog ["
+op = OptionParser(usage=usage)
+
+op.add_option('-f', '--gene')
+
+

@@ -1,0 +1,13 @@
+#!/usr/bin/env python
+
+"""
+ Start web service to manage colony-live system
+
+"""
+
+from multiprocessing import Process
+
+from clive.web.code import app
+
+app.run()
+

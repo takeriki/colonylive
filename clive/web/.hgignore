@@ -1,0 +1,7 @@
+syntax: glob
+*.pyc
+session/*
+static/pict/*
+static/input/*
+static/produced/*
+static/temp/*

@@ -1,0 +1,26 @@
+$def with (title, table='', calender='') 
+
+$:render.header(title) 
+
+<h2>Registration Management</h2>
+
+<h3>Registerd table: </h3>
+
+$:table
+
+<FORM action=/reg_manage method=POST>
+<p>ID = <input type=text name='cancel_ind' size=5>
+<input type=submit name="cancel" value="CANCEL"></p>
+</form>
+
+<br>
+
+<h3>Calender (Day 0 = today): </h3>
+
+<pre style='font-size: 10pt'>
+
+$:calender
+
+</pre>
+
+$:render.footer()

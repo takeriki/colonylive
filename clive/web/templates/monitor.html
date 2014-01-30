@@ -1,0 +1,18 @@
+$def with (title, status, start='', abort='')
+
+$:render.header(title, "function openwin(){ t = window.open('/scan_info', '_blank', 'width=800,height=700, menubar=no, toolbar=no, scrollbars=yes'); }")
+
+<body>
+<h2>Monitor</h2>
+
+<h3>Scanner status:</h3>
+$:status
+
+<h3>Start:</h3>
+$:start
+
+<h3>Manual abort:</h3>
+$:abort
+
+
+$:render.footer()
