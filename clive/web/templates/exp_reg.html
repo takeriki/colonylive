@@ -2,7 +2,7 @@ $def with (title, msg='', year='', month='', day='', hour='' )
 
 $:render.header(title)
 
-<h2>Experiment registration</h2>
+<h3>Experiment registration</h3>
 
 $:msg
 
@@ -79,10 +79,11 @@ Multiple values; <b>comma separation</b><br>
             <td><input type=text name='values3' size=100></td>
         </tr>
     </table>
-    Plate_ids and Values (should correspond to plate_ids)
     <br>
 
     <td><input type=submit name=submit value=submit></td>
+
 </form>
 
 $:render.footer()
+
