@@ -1,0 +1,27 @@
+$def with (title, cont)
+
+$:render.header(title)
+
+<h3>Download by Exp ID</h3>
+
+
+<h4>Growth data (csv)</h4>
+
+<FORM action=/download method=POST>
+<input type=text name='exp_id' size=20>
+<input type=submit name="type" value="get csv">
+</form>
+
+<h4>Images (tar archive)</h4>
+
+<FORM action=/download method=POST>
+<input type=text name='exp_id' size=20>
+<input type=submit name="type" value="Get">
+</form>
+
+<pre>
+$:cont
+</pre>
+
+
+$:render.footer()
