@@ -21,6 +21,7 @@ from clive.io.tmp import DIR_TMP
 from clive.db.handler import ScannerHandler, ExpHandler, PersonHandler
 from monitor import ScanStatus, ScanOrder
 from scheduler import ScheduleManager
+from download import make_growth_csv
 
 cfg = Configure()
 SCANNER_IDS = map(int,cfg[('scan','scanner_ids')].split(","))
@@ -44,8 +45,7 @@ urls = (
     '/user_reg', 'Userreg',
     '/exp_reg', 'Expreg',
     '/reg_manage', 'Regmanage',
-    '/scan_info', 'scan_info',
-    '/upload','Upload'
+    '/download','Download'
 )
 
 
@@ -253,7 +253,6 @@ class monitor:
         abort = scan_abort.make_button(session.person_id)
         return render.monitor(self.title, status, start, abort)
 
-
     def POST(self):
         error = ''
         out = ''
@@ -276,6 +275,24 @@ class monitor:
         return render.monitor(self.title, status, start, abort)
 
 
+class Download:
+    title = 'Download'
+    
+    def GET(self):
+        check_login()
+        return render.download(self.title, cont='')
+
+    def POST(self):
+        inputs = web.input()
+        try:
+            exp_id = int(inputs['exp_id'])
+        except:
+            return render.download(self.title)
+        
+        cont = make_growth_csv(exp_id)
+        
+        return render.download(self.title, cont)
+            
+
 if __name__ == "__main__":
     app.run() 
-

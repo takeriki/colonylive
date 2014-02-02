@@ -7,8 +7,8 @@ from email.MIMEBase import MIMEBase
 from email.MIMEMultipart import MIMEMultipart
 from email.Header import Header
 
-from clive.core.parameter import cfg
-EMAIL = cfg.get('GENERAL','email_admin')
+#from clive.core.parameter import cfg
+#EMAIL = cfg.get('GENERAL','email_admin')
 
 def send_mail(from_addr, to_addr, subject, body, attach=''):
     # Create a text/plain message

@@ -72,6 +72,9 @@ class ExpManager():
             con, ltg, mgr, spg = ary[row-1, col-1, :]
             growth_handler.create(self.exp.id,
                  col, row, con, ltg, mgr, spg)
+    
+    def get_growth(self):
+        return growth_handler.load_by_exp_id(self.exp.id)
 
     def set_step_done(self, value):
         self.exp.step_done = value

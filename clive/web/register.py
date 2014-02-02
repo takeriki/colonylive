@@ -10,7 +10,7 @@ import numpy as np
 
 import send_mail
 
-from clive.core.parameter import cfg
+from clive.core.conf import Configure
 from clive.db.handler import ExpHandler, PersonHandler
 from scheduler import ScheduleManager
 
@@ -18,7 +18,8 @@ exp_handler = ExpHandler()
 person_handler = PersonHandler()
 schedule_manager = ScheduleManager()
 
-SCANNER_IDS = map(int, cfg.get('SCAN','scanner_ids').split(','))
+cfg = Configure()
+SCANNER_IDS = map(int,cfg[('scan','scanner_ids')].split(","))
 
 
 def main(values):
