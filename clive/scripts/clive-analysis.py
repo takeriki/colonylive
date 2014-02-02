@@ -1,20 +1,39 @@
 #!/usr/bin/env python
 
 """
-Keep reducing file number in the scan image folder
+Routine analysis (automatic)
 
 """
 
-from multiprocessing import Process
+import time
+import datetime
 
-from clive.analysis.routine import perform
+from clive.db.handler import ExpHandler
+from clive.analysis.process import execute
 
-jobs = []
-jobs += [Process(target=perform, )]
+exp_handler = ExpHandler()
 
-for j in jobs:
-    j.start()
-for j in jobs:
-    j.join()
 
-print "stop"
+def perform():
+    while True:
+        exps = exp_handler.get_unprocess_exps()
+        print "Analysis targets:", exps
+        for exp in exps:
+            if exp.id != 1:
+                continue
+            execute(exp.id, exp.step_done)    
+
+        _wait_until_midnight()
+    
+
+def _wait_until_midnight():
+    dt = datetime.datetime.now()
+    tsec_now = dt.hour * 3600 + dt.minute * 60 + dt.second
+    tsec_day = 24 * 3600
+    sec_wait = tsec_day - tsec_now
+    time.sleep(sec_wait)
+
+
+if __name__ == "__main__":
+    perform()
+
