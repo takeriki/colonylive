@@ -281,14 +281,14 @@ class Download:
     
     def GET(self):
         check_login()
-        return render.download(self.title, cont='')
+        return render.download(self.title)
 
     def POST(self):
         inputs = web.input()
         try:
             exp_id = int(inputs['exp_id'])
         except:
-            return render.download(self.title, cont='')
+            return render.download(self.title)
 
         if inputs['item'] == "image":
             data = make_images_tar(exp_id)

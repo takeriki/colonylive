@@ -1,11 +1,9 @@
-$def with (title, cont)
+$def with (title)
 
 $:render.header(title)
 
 <h3>Download by Exp ID</h3>
 
-
-<h4>Growth data (csv)</h4>
 
 <FORM action=/download method=POST>
 
@@ -28,10 +26,5 @@ $:render.header(title)
 <br>
 <input type=submit name=submit value="Get">
 </form>
-
-<pre>
-$:cont
-</pre>
-
 
 $:render.footer()
