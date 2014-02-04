@@ -11,7 +11,7 @@ class Test(unittest.TestCase):
         test()
     
     def test_modelfit(self):
-        from lib.modelfit import test
+        from part.modelfit import test
         test()
 
 if __name__ == '__main__':

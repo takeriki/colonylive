@@ -8,8 +8,8 @@ import cPickle
 import numpy as np
 import matplotlib.pylab as plt
 
-from lib.grid import PlateGrid
-from lib.image import Image
+from part.grid import PlateGrid
+from part.image import Image
 
 
 # max_dif: limit value for diff sequence

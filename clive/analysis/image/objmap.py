@@ -10,9 +10,9 @@ import cPickle
 import matplotlib.pylab as plt
 
 from clive.core.conf import Configure
-from lib.image import Image
-from lib.imageobj import get_all_imgobjs
-from lib.motsu import get_thresholds
+from part.image import Image
+from part.imageobj import get_all_imgobjs
+from part.motsu import get_thresholds
 
 COLONY_AREA_LOWER_LIMIT = 20
 COLONY_AREA_UPPER_LIMIT = 2000

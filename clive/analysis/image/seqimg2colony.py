@@ -4,7 +4,7 @@ import os
 import sys
 import glob
 
-from lib.image import Image
+from part.image import Image
 from objmap import get_objectmap
 from setgrid import detect_grid
 from colony import get_colony

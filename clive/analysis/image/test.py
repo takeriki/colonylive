@@ -3,7 +3,7 @@ import unittest
 class Test(unittest.TestCase):
     
     def test_motsu(self):
-        from lib.motsu import test
+        from part.motsu import test
         test()
 
     def test_objmap(self):

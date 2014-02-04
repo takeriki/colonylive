@@ -12,7 +12,7 @@ import matplotlib.pylab as plt
 from clive.core.conf import Configure
 from clive.db.handler import ColonyHandler
 from clive.db.manager import ExpManager
-from lib.modelfit import get_growth_parameters
+from part.modelfit import get_growth_parameters
 
 cfg = Configure()
 MINUTES_FIXED = int(cfg[('growth','min_fixed_time_point')])

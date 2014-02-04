@@ -16,11 +16,11 @@ from scipy.ndimage.morphology import binary_fill_holes
 from scipy.ndimage.morphology import binary_closing
 from scipy.ndimage.morphology import binary_opening
 
-from lib.colonyimg import ColonyImg
-from lib.colonyexam import ColonyRegionExaminer
-from lib.util import clip_img
-from lib.grid import PlateGrid
-from lib.image import Image
+from part.colonyimg import ColonyImg
+from part.colonyexam import ColonyRegionExaminer
+from part.util import clip_img
+from part.grid import PlateGrid
+from part.image import Image
 from objmap import get_objectmap
 
 
