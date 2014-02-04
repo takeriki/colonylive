@@ -1,0 +1,94 @@
+#!/usr/bin/python
+
+import sys
+import getpass
+import numpy as np
+import subprocess as sp
+
+from clive.core.conf import Configure
+
+cfg = Configure()
+
+
+def make_conf():
+    cfg = Configure()
+    cfg.set_default()
+    cfg.update()
+    cfg[('setup','step')] = str(1)
+    cfg.update()
+
+# step1
+def set_admin():
+    print "Adiminstrator"
+    cfg[('admin','name')] = raw_input("Name: ")
+    cfg[('admin','email')] = raw_input("Email address: ")
+    cfg[('setup','step')] = str(2)
+    cfg.update()
+
+# step2
+def set_database():
+    print "Database"
+    cfg[('admin','name')] = raw_input("Name: ")
+    cfg[('admin','email')] = raw_input("Email address: ")
+    cfg[('setup','step')] = str(3)
+    cfg.update()
+
+# step3
+def install_packages():
+    print "install packages"
+    #sp.call('sudo apt-get -qq update',shell=True)
+    items = [
+        'r-base',
+        'openssh-server',
+        'ntpdate',
+        'xautomation',
+        'wmctrl',
+        'python-mysqldb',
+        'python-numpy',
+        'python-scipy',
+        'python-opencv',
+        'python-matplotlib',
+        'python-rpy2',
+        'python-webpy'
+        ]
+    cmd = 'sudo apt-get -qq -y install ' + " ".join(items)
+    sp.call(cmd,shell=True)
+    cfg[('setup','step')] = str(4)
+    cfg.update()
+
+
+while True:
+    try:
+        cfg.load()
+        step = int(cfg[('setup','step')])
+    except:
+        step = 0
+    
+    print step
+    if step == 0:
+        make_conf()
+    if step == 1:
+        set_admin()
+    if step == 2:
+        set_database()
+    if step == 3:
+        install_packages()
+    if step == 4:
+        break
+
+
+quit()
+
+print "===MySQL database==="
+
+
+set_config()
+
+print cfg[('db','host')]
+quit()
+host = raw_input("Input Host name: ")
+db = raw_input("Input database: ")
+user = raw_input("Input user name: ")
+pwd = raw_input("Input password: ")
+
+print user

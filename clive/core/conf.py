@@ -3,7 +3,6 @@ Configuration manager
 
 """
 
-
 from os.path import expanduser
 import ConfigParser
 
@@ -14,7 +13,7 @@ cfg = ConfigParser.SafeConfigParser()
 
 class Configure():
     def __init__(self):
-        self._load()
+        self.load()
 
     def __getitem__(self, key):
         return self.__dict__[key]
@@ -25,7 +24,7 @@ class Configure():
     def __repr__(self):
         return str(self.__dict__)
 
-    def _load(self):
+    def load(self):
         cfg.read(fpath)
         for section in cfg.sections():
             for option in cfg.options(section):
@@ -35,8 +34,17 @@ class Configure():
     
     def update(self):
         for key, value in self.__dict__.items():
+            print key, value
             section, option = key
-            cfg.set(section, option, value)
+            try:
+                cfg.set(section, option, value)
+            except ConfigParser.NoSectionError:
+                cfg.add_section(section)
+                cfg.set(section, option, value)
+            except Exception as e:
+                print e.message
+                quit()
+
         f = open(fpath,'w')
         cfg.write(f)
         f.close()
@@ -54,7 +62,11 @@ class Configure():
         (('admin','name'),''),
         (('admin','email'),''),
 
-        (('db','main'),''),
+        (('db','host'),'localhost'),
+        (('db','db'),'clive1'),
+        (('db','user'),'clive'),
+        (('db','pass'),'colonylive'),
+        (('db','port'),'3306'),
 
         (('folder','img_tmp'),'%s/img_tmp/' % home),
         (('folder','img_scan'),'%s/img_scan/' % home),
@@ -72,7 +84,9 @@ class Configure():
         (('vuescan','pos_source'),''),
         (('vuescan','pos_mode'),''),
         (('vuescan','pos_abort'),''),
-        (('vuescan','sec_scan_wait'),'240')
+        (('vuescan','sec_scan_wait'),'240'),
+        
+        (('setup','step'),'0')
         ]
         
         for key, value in sets:

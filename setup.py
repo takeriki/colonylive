@@ -1,11 +1,17 @@
 
 from setuptools import setup, find_packages
 setup(
-    name='colony-live',
+    name='colonylive',
     version='1.0',
     packages = find_packages(),
     #install_requires=['numpy','scipy','rpy2','web.py'],
-    scripts=['scripts/test'],
+    scripts=[
+            'clive/scripts/colonylive',
+            'clive/scripts/colonylive-setup',
+            'clive/scripts/clive-scan',
+            'clive/scripts/clive-web',
+            'clive/scripts/clive-analysis',
+            ],
 
     extras_require = {
         'R': ["rpy2>=2.2.2"]
