@@ -8,15 +8,25 @@ $:render.header(title)
 <h4>Growth data (csv)</h4>
 
 <FORM action=/download method=POST>
-<input type=text name='exp_id' size=20>
-<input type=submit name="type" value="get csv">
-</form>
 
-<h4>Images (tar archive)</h4>
+<table>
+<tr>
+<td>expID</td>
+<td><input type=text name='exp_id' size=30></td>
+</tr>
 
-<FORM action=/download method=POST>
-<input type=text name='exp_id' size=20>
-<input type=submit name="type" value="Get">
+<tr>
+<td>Type of data</td>
+<td>
+<input type=radio name="item" value="growth" checked> Growth data (csv)<br>
+<input type=radio name="item" value="image"> Image files (tar archive)<br>
+</td>
+</tr>
+
+</table>
+
+<br>
+<input type=submit name=submit value="Get">
 </form>
 
 <pre>

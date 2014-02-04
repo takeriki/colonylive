@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 """
  provide web site for colony-live system
 
@@ -14,14 +16,13 @@ path = os.path.dirname(os.path.abspath(__file__))
 os.chdir(path)
 
 #web.config.debug = False
-
 from clive.core.version import get_version
 from clive.core.conf import Configure
 from clive.io.tmp import DIR_TMP
 from clive.db.handler import ScannerHandler, ExpHandler, PersonHandler
 from monitor import ScanStatus, ScanOrder
 from scheduler import ScheduleManager
-from download import make_growth_csv
+from download import make_growth_csv, make_images_tar
 
 cfg = Configure()
 SCANNER_IDS = map(int,cfg[('scan','scanner_ids')].split(","))
@@ -287,11 +288,23 @@ class Download:
         try:
             exp_id = int(inputs['exp_id'])
         except:
-            return render.download(self.title)
-        
-        cont = make_growth_csv(exp_id)
-        
-        return render.download(self.title, cont)
+            return render.download(self.title, cont='')
+
+        if inputs['item'] == "image":
+            data = make_images_tar(exp_id)
+            fname = "%d.tar" % exp_id
+            web.header("Content-Disposition", "attachment; filename=%s" % fname)
+            web.header("Content-Length", len(data))
+            web.header("Content-Type", "application/octet-stream")
+            return data
+    
+        if inputs['item'] == "growth":
+            data = make_growth_csv(exp_id)
+            fname = "%d.csv" % exp_id
+            web.header("Content-Disposition", "attachment; filename=%s" % fname)
+            web.header("Content-Length", len(data))
+            web.header("Content-Type", "text/csv")
+            return data
             
 
 if __name__ == "__main__":
