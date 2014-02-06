@@ -19,6 +19,11 @@ class ScannerHandler():
     def get_scanner_ids(self):
         query = self.db.session.query(Scanner).order_by(Scanner.id)
         return [i.id for i in query.all()]
+    
+    def create(self, scanner_id):
+        scanner = Scanner(id=scanner_id)
+        self.db.session.add(scanner)
+        self.db.session.commit()
 
     def update(self):
         self.db.session.commit()

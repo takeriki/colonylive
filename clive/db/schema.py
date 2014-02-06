@@ -5,23 +5,21 @@ Database schema for SQLAlchemy
 
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import Table, Column, Integer, Float, String, DateTime, MetaData, ForeignKey
+from database import DB
 
 Base = declarative_base()
 class Scanner(Base):
     __tablename__ = 'scanner'
 
     id = Column(Integer, primary_key=True)
-    person_name = Column(String)
+    person_name = Column(String(100))
     dt_start = Column(DateTime)
     dt_finish = Column(DateTime)
-    exp_ids = Column(String)
-    min_grows = Column(String)
+    exp_ids = Column(String(300))
+    min_grows = Column(String(10000))
     
-    def __init__(self, person_id, dt_start, dt_finish, exp_ids):
-        self.person_name = person_name
-        self.dt_start = dt_start
-        self.dt_finish = dt_finish
-        self.exp_ids = exp_ids
+    def __init__(self, id):
+        self.id = id
 
     def __repr__(self):
         return "ScannerID=%d" % self.id
@@ -33,7 +31,7 @@ class Imgscan(Base):
     id = Column(Integer, primary_key=True)
     dt_scan = Column(DateTime)
     scanner_id = Column(DateTime)
-    exp_ids = Column(String)
+    exp_ids = Column(String(300))
     
     def __init__(self, scanner_id, dt_scan, exp_ids):
         self.scanner_id = scanner_id
@@ -50,7 +48,7 @@ class Img(Base):
     id = Column(Integer, primary_key=True)
     exp_id = Column(Integer)
     scanner_id = Column(Integer)
-    min_grows = Column(String)
+    min_grows = Column(String(10000))
     
     def __init__(self, exp_id, scanner_id, min_grows):
         self.exp_id = exp_id
@@ -65,19 +63,19 @@ class Exp(Base):
     __tablename__ = 'exp'
 
     id = Column(Integer, primary_key=True)
-    project = Column(String)
+    project = Column(String(200))
     plate_id = Column(Integer)
     person_id = Column(Integer)
-    medium = Column(String)
-    conditions = Column(String)
+    medium = Column(String(100))
+    conditions = Column(String(200))
     h_scan = Column(Integer)
     dt_start = Column(DateTime)
-    pos_scan = Column(String)
+    pos_scan = Column(String(100))
     step_done = Column(Integer)
     n_death = Column(Integer)
     pcc = Column(Float)
-    failure = Column(String)
-    note = Column(String)
+    failure = Column(String(100))
+    note = Column(String(1000))
     in_process = Column(Integer)
     
     def __init__(self, person_id, project, plate_id, medium, dt_start, conditions, h_scan, pos_scan):
@@ -101,9 +99,9 @@ class Person(Base):
 
     id = Column(Integer, primary_key=True)
     user = Column(Integer)
-    pass_sha1 = Column(String)
-    name = Column(String)
-    email = Column(String)
+    pass_sha1 = Column(String(100))
+    name = Column(String(100))
+    email = Column(String(100))
     
     def __init__(self, user, pass_sha1, name, email):
         self.user = user
@@ -121,7 +119,7 @@ class Plate(Base):
     id = Column(Integer, primary_key=True)
     ncol = Column(Integer)
     nrow = Column(Integer)
-    name = Column(String)
+    name = Column(String(200))
     
     def __init__(self, ncol, nrow, name):
         self.ncol = ncol
@@ -140,10 +138,10 @@ class Colony(Base):
     exp_id = Column(Integer)
     col = Column(Integer)
     row = Column(Integer)
-    location = Column(String)
-    areas = Column(String)
-    masss = Column(String)
-    cmasss = Column(String)
+    location = Column(String(200))
+    areas = Column(String(10000))
+    masss = Column(String(10000))
+    cmasss = Column(String(10000))
     
     def __init__(self, exp_id, col, row, location, areas, masss, cmasss):
         self.exp_id = exp_id
@@ -207,4 +205,12 @@ class GrowthRaw(Base):
     def __repr__(self):
         return "GrowthRawID=%d" % self.id
 
+
+def make_all_tables():
+    db = DB()
+    Base.metadata.create_all(db.engine)
+
+    
+if __name__ == "__main__":
+    make_all_tables()
 

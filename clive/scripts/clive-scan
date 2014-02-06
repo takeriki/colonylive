@@ -12,9 +12,9 @@ from multiprocessing import Process
 from clive.scan.cleaner import keep_clean
 from clive.scan.cycle_scan import keep_scan
 
-
 os.system("vuescan &")
-time.sleep(20)
+time.sleep(5)
+os.system("wmctrl -r VueScan -b add,maximized_horz,maximized_vert")
 
 jobs = []
 jobs += [Process(target=keep_clean, )]

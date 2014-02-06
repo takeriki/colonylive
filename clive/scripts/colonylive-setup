@@ -1,5 +1,6 @@
 #!/usr/bin/python
 
+import os
 import sys
 import getpass
 import numpy as np
@@ -10,33 +11,107 @@ from clive.core.conf import Configure
 cfg = Configure()
 
 
-def make_conf():
-    cfg = Configure()
+def main():
+    #set_config()
+    set_database()
+    #set_package()
+
+
+# config file
+#==================================================
+
+try:
+    cfg.load()
+    step = int(cfg[('setup','step')])
+except:
     cfg.set_default()
     cfg.update()
-    cfg[('setup','step')] = str(1)
+
+
+def set_value(msg, key):
+    try: 
+        default = cfg[key]
+    except:
+        default = ''
+
+    while True:
+        ans = raw_input("%s [%s]: " % (msg, default))
+        if ans == "":
+            if default != '':
+                value = default
+                break
+        else:
+            value = ans
+            break
+    cfg[key] = value
     cfg.update()
 
-# step1
-def set_admin():
+
+def set_config():
+    os.system('clear')
+    print "Configure setting"
+    print "========================="
+    print "Item [Current value]: "
+    print 
     print "Adiminstrator"
-    cfg[('admin','name')] = raw_input("Name: ")
-    cfg[('admin','email')] = raw_input("Email address: ")
-    cfg[('setup','step')] = str(2)
-    cfg.update()
+    set_value('- Name', ('admin','name'))
+    set_value('- email', ('admin','email'))
 
-# step2
+    print "\nConnected scanner IDs -- e.g.) 1,2,3"
+    set_value('- IDs', ('scan','scanner_ids'))
+
+    print "\nMySQL database"
+    set_value('- Host', ('db','host'))
+    set_value('- Database', ('db','db'))
+    set_value('- Port', ('db','port'))
+    set_value('- User', ('db','user'))
+    set_value('- Password', ('db','pass'))
+    print "[OK]"
+    raw_input("Press Enter...")
+
+
+
+# Database setting
+#==================================================
+
+from clive.db.database import DB
+from clive.db.schema import make_all_tables
+from clive.db.handler import ScannerHandler
+scanner_handler = ScannerHandler()
+
 def set_database():
-    print "Database"
-    cfg[('admin','name')] = raw_input("Name: ")
-    cfg[('admin','email')] = raw_input("Email address: ")
-    cfg[('setup','step')] = str(3)
-    cfg.update()
+    os.system('clear')
+    print "Database Setting"
+    print "========================="
+    print 
+    db = DB()
+    try:
+        db.session.execute("show tables")
+    except:
+        print "Cannot connect to MySQL database"
+        print "Check MySQL account information"
+        quit()
+    make_all_tables()
+    
+    sids = map(int, cfg[('scan','scanner_ids')].split(","))
+    for sid in sids:
+        try:
+            scanner_handler.load(sid)
+        except:
+            scanner_handler.create(sid)
+    print "[OK]"
+    raw_input("Press Enter...")
 
-# step3
-def install_packages():
-    print "install packages"
-    #sp.call('sudo apt-get -qq update',shell=True)
+
+# Install packages
+#==================================================
+
+def set_package():
+    os.system('clear')
+    print "Install packages"
+    print "========================="
+    print 
+    sp.call('sudo apt-get -qq update',shell=True)
     items = [
         'r-base',
         'openssh-server',
@@ -53,42 +128,23 @@ def install_packages():
         ]
     cmd = 'sudo apt-get -qq -y install ' + " ".join(items)
     sp.call(cmd,shell=True)
-    cfg[('setup','step')] = str(4)
-    cfg.update()
+    print "[OK]"
+    raw_input("Press Enter...")
 
 
-while True:
+
+# VueScan setting
+#==================================================
+
+def set_vuescan():
     try:
-        cfg.load()
-        step = int(cfg[('setup','step')])
+        os.system("vuescan")
     except:
-        step = 0
-    
-    print step
-    if step == 0:
-        make_conf()
-    if step == 1:
-        set_admin()
-    if step == 2:
-        set_database()
-    if step == 3:
-        install_packages()
-    if step == 4:
-        break
+        print "Cannot run VueScan"
+        quit()
 
 
-quit()
 
-print "===MySQL database==="
+if __name__ == "__main__":
+    main()
 
-
-set_config()
-
-print cfg[('db','host')]
-quit()
-host = raw_input("Input Host name: ")
-db = raw_input("Input database: ")
-user = raw_input("Input user name: ")
-pwd = raw_input("Input password: ")
-
-print user

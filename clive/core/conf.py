@@ -34,7 +34,6 @@ class Configure():
     
     def update(self):
         for key, value in self.__dict__.items():
-            print key, value
             section, option = key
             try:
                 cfg.set(section, option, value)
@@ -59,8 +58,8 @@ class Configure():
 
     def set_default(self):
         sets = [
-        (('admin','name'),''),
-        (('admin','email'),''),
+        (('admin','name'),'admin'),
+        (('admin','email'),'admin@host.com'),
 
         (('db','host'),'localhost'),
         (('db','db'),'clive1'),
