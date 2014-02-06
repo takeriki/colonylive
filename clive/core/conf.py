@@ -73,12 +73,8 @@ class Configure():
         (('folder','img_scan'),'%s/img/' % home),
 
         (('scan','scanner_ids'),''),
-        (('scan','pos_scan'),''),
         (('scan','min_cycle'),'30'),
         (('scan','days_scan_keep'),'30'),
-
-        (('pixel','plate_horizontal'),'1900'),
-        (('pixel','plate_vertical'),'1320'),
 
         (('vuescan','pos_input_tab'),''),
         (('vuescan','pos_source'),''),

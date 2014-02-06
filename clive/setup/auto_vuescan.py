@@ -71,7 +71,7 @@ if __name__ == "__main__":
         print "Running VueScan: OK"
     else:
         print "Running VueScan: NG"
-        quit()
+        quit("Run VueScan!")
     setup()
     print "Complete!"
 
