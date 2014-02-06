@@ -20,6 +20,7 @@ SEC_WAIT_LIMIT = int(cfg[('vuescan','sec_scan_wait')])
 
 
 def gui_scan(scanner, fname):
+    fname = fname.replace(".tif","")
     initialize()
     start_scan(scanner)
     no_window = wait_scanned_window()
@@ -92,6 +93,13 @@ def start_scan(scanner):
 
 def save_scanned_pict(fname):
     # Save image file
+    os.system("xte 'keydown Control_L'")
+    os.system("xte 'key a'")
+    os.system("xte 'keyup Control_L'")
+    time.sleep(0.3)
+    os.system("xte 'key Delete'")
+    time.sleep(0.3)
+
     os.system("xte 'str %s'" % fname)
     os.system("xte 'key Return'")
     time.sleep(8)
@@ -138,5 +146,5 @@ def treat_timeout(scanner, fname):
 
 
 if __name__ == "__main__":
-    gui_scan(1,'test')
+    gui_scan(1,'test.tif')
 

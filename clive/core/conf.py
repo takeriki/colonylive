@@ -70,7 +70,7 @@ class Configure():
 
         (('folder','img_tmp'),'%s/img_tmp/' % home),
         (('folder','img_scan'),'%s/img_scan/' % home),
-        (('folder','img_scan'),'%s/img/' % home),
+        (('folder','img_store'),'%s/img/' % home),
 
         (('scan','scanner_ids'),''),
         (('scan','min_cycle'),'30'),

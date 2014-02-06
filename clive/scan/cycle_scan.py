@@ -16,7 +16,7 @@ from clive.io.imgio import ExpTmpImgIO, ScanImgIO
 from clive.db.handler import ScannerHandler, ImgscanHandler, ImgHandler
 from clive.db.manager import ExpManager
 from gui_scan import gui_scan
-from splitimg import split_img_scan
+from imgcrip import clip_scanimg
 
 scanner_handler = ScannerHandler()
 img_scan_handler = ImgscanHandler()
@@ -77,8 +77,8 @@ def run():
         print "%s; " % scanner.person_name,
         print "until %s " % scanner.dt_finish.strftime('%a, %d %b %Y'),
         img_scan = img_scan_handler.create(scanner.id, scanner.exp_ids)
-        scanimgio = ScanImgIO(img_scan.id)
-        fail = gui_scan(scanner.id, scanimgio.path)
+        scanimg = ScanImgIO(img_scan.id)
+        fail = gui_scan(scanner.id, scanimg.path)
         #fail = 0
         if fail:
             print "[Faild]"
@@ -97,10 +97,11 @@ def run():
         scanner_handler.update()
     
         # Split image
-        tmpimgs = [ExpTmpImg(i) for i in exp_ids]
+        tmpimgs = [ExpTmpImgIO(i) for i in exp_ids]
         n_scan = len(min_grows) - 1
         path_outs = [i.get_path(n_scan) for i in tmpimgs]
-        split_img_scan(img_scan.id, path_outs)
+        scanimg = ScanImgIO(29093)
+        clip_scanimg(scanimg.path, path_outs)
         for tmpimg in tmpimgs:
             tmpimg.compress()
     

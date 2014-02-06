@@ -13,7 +13,7 @@ person_handler = PersonHandler()
 
 cfg = Configure()
 SCANNER_IDS = map(int,cfg[('scan','scanner_ids')].split(","))
-POSS_SCAN = map(int,cfg[('scan','pos_scan')].split(","))
+POSS_SCAN = range(1, int(cfg[('scanlayout','number')])+1)
 DAYS_SCHEDULE = 14
 
 

@@ -15,8 +15,7 @@ schedule_manager = ScheduleManager()
 
 cfg = Configure()
 SCANNER_IDS = map(int,cfg[('scan','scanner_ids')].split(","))
-POSS_SCAN = map(int,cfg[('scan','pos_scan')].split(","))
-HOUR_GAP = int(cfg[('web','hour_gap')])
+HOUR_GAP = 3
 DAYS_SCHEDULE = 14
 
 

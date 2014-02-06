@@ -73,7 +73,7 @@ class ExpTmpImgIO():
 class ScanImgIO():
     def __init__(self, imgscan_id):
         self.imgscan_id = imgscan_id
-        self.path = "%s%d" % (FOLDER_SCAN, imgscan_id)
+        self.path = "%s%d.tif" % (FOLDER_SCAN, imgscan_id)
 
 
 if __name__ == "__main__":

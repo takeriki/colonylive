@@ -26,7 +26,6 @@ from download import make_growth_csv, make_images_tar
 
 cfg = Configure()
 SCANNER_IDS = map(int,cfg[('scan','scanner_ids')].split(","))
-HOUR_GAP = int(cfg[('web','hour_gap')])
 
 VERSION = get_version()
 

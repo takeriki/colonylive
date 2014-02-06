@@ -31,7 +31,6 @@ def clip_scanimg(fpath_in, fpath_outs):
     
     for fpath_out, clipinfo in zip(fpath_outs, clipinfos):
         cary = clip_img(ary, clipinfo)
-        print fpath_out
         cv2.imwrite(fpath_out, cary)
         cmd = "touch -r %s %s" % (fpath_in, fpath_out)
         os.system(cmd)
@@ -54,12 +53,14 @@ def clip_img(ary, clipinfo):
     cary = ary[ymin:ymax, xmin:xmax]
     
     # rotate
-    rcary = np.rot90(cary, num_rot)
+    rcary = cary.copy()
+    for i in range(num_rot):
+        rcary = cv2.transpose(rcary)
+
     if deg != 0:
         rmat = cv2.getRotationMatrix2D(
-            (rcary.shape[1]/2,rcary.shape[0]/2), -deg, 1.0)
-        tmp = cv2.warpAffine(
-            rcary, rmat, (rcary.shape[1], rcary.shape[0]))
+            (rcary.shape[1]/2,rcary.shape[0]/2), deg, 1.0)
+        tmp = cv2.warpAffine(rcary, rmat, (rcary.shape[1], rcary.shape[0]))
         dx = (tmp.shape[0] - xlen)/2
         dy = (tmp.shape[1] - ylen)/2
         rcary = tmp[dx:-dx,dy:-dy,:]
@@ -73,6 +74,5 @@ if __name__ == '__main__':
         quit()
     fpath_in = argvs[1] 
     fpath_outs = [i for i in argvs[2].split("|")]
-
     clip_scanimg(fpath_in, fpath_outs)
 
