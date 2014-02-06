@@ -11,7 +11,8 @@ import datetime
 
 from clive.core.version import get_version
 from clive.core.conf import Configure
-from clive.io.imgio import compress_file
+from clive.io.imgio import ExpTmpImgIO, ScanImgIO
+
 from clive.db.handler import ScannerHandler, ImgscanHandler, ImgHandler
 from clive.db.manager import ExpManager
 from gui_scan import gui_scan
@@ -23,10 +24,7 @@ img_handler = ImgHandler()
 
 cfg = Configure()
 MIN_CYCLE = int(cfg[('scan','min_cycle')])
-FOLDER_TMP = cfg[('folder','img_tmp')]
-FOLDER_IMG_STORE = cfg[('folder','img_store')]
 SCANNER_IDS = map(int,cfg[('scan','scanner_ids')].split(","))
-
 VERSION = get_version()
 
 
@@ -79,7 +77,8 @@ def run():
         print "%s; " % scanner.person_name,
         print "until %s " % scanner.dt_finish.strftime('%a, %d %b %Y'),
         img_scan = img_scan_handler.create(scanner.id, scanner.exp_ids)
-        fail = gui_scan(scanner.id, img_scan.id)
+        scanimgio = ScanImgIO(img_scan.id)
+        fail = gui_scan(scanner.id, scanimgio.path)
         #fail = 0
         if fail:
             print "[Faild]"
@@ -90,9 +89,6 @@ def run():
         exp_ids = map(int, scanner.exp_ids.split("|"))
         if scanner.min_grows in [None, '']:
             min_grows = []
-            for exp_id in exp_ids:
-                cmd = "mkdir -p %s%d" % (FOLDER_TMP, exp_id)
-                os.system(cmd)
         else:
             min_grows = [i for i in scanner.min_grows.split("|")]
         min_grow = _get_min_grow(scanner, img_scan)
@@ -101,12 +97,12 @@ def run():
         scanner_handler.update()
     
         # Split image
+        tmpimgs = [ExpTmpImg(i) for i in exp_ids]
         n_scan = len(min_grows) - 1
-        fpaths = ["%s%d/%d-%04d.tif" % (FOLDER_TMP, exp_id, exp_id, n_scan)
-                   for exp_id in exp_ids]
-        split_img_scan(img_scan.id, fpaths)
-        for fpath in fpaths:
-            compress_file(fpath)
+        path_outs = [i.get_path(n_scan) for i in tmpimgs]
+        split_img_scan(img_scan.id, path_outs)
+        for tmpimg in tmpimgs:
+            tmpimg.compress()
     
     print
     print "DONE"
@@ -121,16 +117,10 @@ def _get_min_grow(scanner, img_scan):
 
 def store_images(scanner):
     exp_ids = map(int, scanner.exp_ids.split("|"))
-    os.chdir(FOLDER_TMP)
     for exp_id in exp_ids:
-        cmd = "tar cf %d.tar --remove-files %d" % (exp_id, exp_id)
-        os.system(cmd)
-        cmd = "scp -p %d.tar %s" % (exp_id, FOLDER_IMG_STORE)
-        os.system(cmd)
-        cmd = "rm %d.tar" % (exp_id)
-        os.system(cmd)
-        
-        img_handler.create(exp_id, scanner.id, scanner.min_grows)
+        store_tmp_images(exp_id)
+        img_handler.create(
+            exp_id, scanner.id, scanner.min_grows)
         expman = ExpManager(exp_id)
         expman.set_in_process(0)
         expman.set_step_done(1)

@@ -44,6 +44,7 @@ def main(fpath):
     print "-----------------"
 
     posids = set(range(1,n_plates+1))
+    cfg[('scanlayout','number')] = n_plates
     for contour in contours:
         tary = ary.copy()
         xy_center = get_center(contour)
