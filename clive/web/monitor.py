@@ -181,7 +181,8 @@ def main(person_id):
 
 if __name__ == "__main__":
     argvs = sys.argv
-    if len(argvs) != 2:
-        quit("usage: %s [person_id]" % argvs[0])
+    if len(argvs) != 3:
+        quit("usage: %s [person_id] [start or abort]" % argvs[0])
     person_id = int(argvs[1])
-    main(person_id)
+    vtype = argvs[2]
+    main(person_id, vtype)

@@ -9,6 +9,7 @@ import os
 import web
 import hashlib
 import datetime
+import commands
 import subprocess
 
 # set to web folder 
@@ -95,7 +96,6 @@ session.version = VERSION
 #
 class login:
     def GET(self):
-        print session.loggedin
         if session.loggedin:
             raise web.seeother('/monitor')
         else:
@@ -139,15 +139,13 @@ class Userreg:
     def POST(self):
         inputs = web.input()
         
-        p = subprocess.Popen(["python", "./adduser.py",
-            inputs.user,
+        opts = " ".join([
+            inputs.user, 
             inputs.password,
             inputs.name,
-            inputs.email],
-            stdout=subprocess.PIPE,
-            stderr=subprocess.STDOUT)
-
-        outs = [i.replace("\n","<br>") for i in p.stdout]
+            inputs.email])
+        res = commands.getoutput("python ./adduser.py %s" % opts)
+        outs = [i.replace("\n","<br>") for i in res]
         output = "".join(map(str,outs))
         return render.user_reg('user_reg', output)
 
@@ -174,20 +172,17 @@ class Expreg:
             inputs.hour
             )
 
-        p = subprocess.Popen(["python", "./register.py",
+        opts = " ".join([
             str(session.person_id),
             inputs.project,
             dt_start,
             inputs.plate_ids,
             inputs.medium,
             inputs.h_scan,
-            conditions_key,
-            conditions_value],\
-            stdout=subprocess.PIPE,
-            stderr=subprocess.STDOUT)
-
-        #outs = [i.replace("\n","<br>") for i in p.stdout]
-        tmp = [i for i in p.stdout]
+            "'"+conditions_key+"'",
+            "'"+conditions_value+"'"])
+        res = commands.getoutput("python ./register.py %s" % opts)
+        tmp = [i for i in res]
         output = "".join(map(str,tmp))
         year, month, day, hour = self._get_dt()
         return render.exp_reg('exp_reg', output, year, month, day, hour)
@@ -214,7 +209,6 @@ class Regmanage:
     def POST(self):
         inputs = web.input()
         session.scan_inputs = inputs
-        #self.cancel_batch(int(inputs.cancel_ind), session.person_id)
         schedule_manager.cancel(int(inputs.cancel_ind))
         schedule_manager.reload()
         table = schedule_manager.make_table()
@@ -222,20 +216,14 @@ class Regmanage:
         return render.reg_manage(self.title, table, calender)
     
     def _make_table(self):
-        p = subprocess.Popen(["python", "scheduler.py", 'table'],
-            stdout=subprocess.PIPE,
-            stderr=subprocess.STDOUT)
-        #tmp = [i.replace("\n","<br>\n") for i in p.stdout]
-        tmp = [i for i in p.stdout]
+        res = commands.getoutput("python ./scheduler.py table")
+        tmp = [i for i in res]
         html = "".join(map(str,tmp))
         return html
     
     def _make_calender(self):
-        p = subprocess.Popen(["python", "scheduler.py", 'calender'],
-            stdout=subprocess.PIPE,
-            stderr=subprocess.STDOUT)
-        #tmp = [i.replace("\n","\n") for i in p.stdout]
-        tmp = [i for i in p.stdout]
+        res = commands.getoutput("python ./scheduler.py calender")
+        tmp = [i for i in res]
         html = "".join(map(str,tmp))
         return html
 
@@ -291,7 +279,7 @@ class Download:
 
         if inputs['item'] == "image":
             data = make_images_tar(exp_id)
-            fname = "%d.tar" % exp_id
+            fname = "%d.zip" % exp_id
             web.header("Content-Disposition", "attachment; filename=%s" % fname)
             web.header("Content-Length", len(data))
             web.header("Content-Type", "application/octet-stream")

@@ -22,15 +22,13 @@ class ExpImgIO():
         
         print "fetching image..."
         if not os.path.exists(path_in+"/%d"%self.exp_id):
-            cmd = "scp -q gi-bioserv:/ngs/clive/img/%d.tar %s/" % (exp_id, path_in)
+            cmd = "scp -q gi-bioserv:/ngs/clive/img/%d.zip %s/" % (exp_id, path_in)
             os.system(cmd)
             
             cwd = os.getcwd()
             os.chdir(path_in)
             fname = "%s/%d" % (path_in, self.exp_id)
-            cmd = "tar xf %s.tar && rm %s.tar" % (fname, fname)
-            os.system(cmd)
-            cmd = "bzip2 -d %s/*" % (fname)
+            cmd = "unzip %s.zip && rm %s.zip" % (fname, fname)
             os.system(cmd)
             os.chdir(cwd)
 
@@ -58,15 +56,9 @@ class ExpTmpImgIO():
 
     def push_folder(self):
         os.chdir(FOLDER_TMP)
-        cmd = "tar cf %d.tar --remove-files %d" % (self.exp_id, self.exp_id)
+        cmd = "zip -q -0 -m -r %d.zip %d" % (self.exp_id, self.exp_id)
         os.system(cmd)
-        cmd = "scp -p %d.tar %s" % (self.exp_id, FOLDER_IMG_STORE)
-        os.system(cmd)
-        cmd = "rm %d.tar" % (self.exp_id)
-        os.system(cmd)
-
-    def compress(self):
-        cmd = "bzip2 -9 %s" % (self.path)
+        cmd = "mv -p %d.zip %s" % (self.exp_id, FOLDER_IMG_STORE)
         os.system(cmd)
 
 

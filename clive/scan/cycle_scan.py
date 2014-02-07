@@ -100,10 +100,7 @@ def run():
         tmpimgs = [ExpTmpImgIO(i) for i in exp_ids]
         n_scan = len(min_grows) - 1
         path_outs = [i.get_path(n_scan) for i in tmpimgs]
-        scanimg = ScanImgIO(29093)
         clip_scanimg(scanimg.path, path_outs)
-        for tmpimg in tmpimgs:
-            tmpimg.compress()
     
     print
     print "DONE"
