@@ -98,7 +98,7 @@ class Person(Base):
     __tablename__ = 'person'
 
     id = Column(Integer, primary_key=True)
-    user = Column(Integer)
+    user = Column(String(100))
     pass_sha1 = Column(String(100))
     name = Column(String(100))
     email = Column(String(100))
