@@ -36,10 +36,6 @@ class ExpImgIO():
         cmd = "rm -rf %s/%d" % (path_in, self.exp_id)
         os.system(cmd)
 
-    def decompress_file(self, path):
-        cmd = "bzip2 -d %s.bz2" % (path)
-        os.system(cmd)
-
 
 class ExpTmpImgIO():
     def __init__(self, exp_id):

@@ -66,10 +66,19 @@ def run():
             print "None"
             continue
 
+        exp_ids = map(int, scanner.exp_ids.split("|"))
+
         # stop?
         if scanner.dt_finish < dt_now:
             print "Complete!!"
-            store_images(scanner)
+            tmpimgs = [ExpTmpImgIO(i) for i in exp_ids]
+            for tmpimg in tmpimgs:
+                tmpimg.push_folder()
+            img_handler.create(
+                exp_id, scanner.id, scanner.min_grows)
+            expman = ExpManager(exp_id)
+            expman.set_in_process(0)
+            expman.set_step_done(1)
             scanner_handler.clean(scanner)
             continue
         
@@ -86,7 +95,6 @@ def run():
         print "[Success]"
         
         # Registration
-        exp_ids = map(int, scanner.exp_ids.split("|"))
         if scanner.min_grows in [None, '']:
             min_grows = []
         else:
