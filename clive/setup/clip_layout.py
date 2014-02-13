@@ -14,7 +14,7 @@ interactive(True)
 from clive.core.conf import Configure
 cfg = Configure()
 
-def main(fpath):
+def layout_setup(fpath):
     ary = cv2.imread(fpath)
     contours = get_red_contours(ary)
     n_plates = len(contours)
@@ -148,7 +148,8 @@ if __name__ == "__main__":
     if len(argvs) != 2:
         quit("%s [layout image file]" % argvs[0])
     fpath = argvs[1]
-    main(fpath)
+    layout_setup(fpath)
+
 
 #cv2.putText(tary, "test", xypos, cv2.FONT_HERSHEY_SIMPLEX, 5, (0,0,0), 10)
 #cv2.imwrite('test.png', ary)

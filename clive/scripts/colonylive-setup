@@ -1,6 +1,7 @@
 #!/usr/bin/python
 
 import os
+import time
 import sys
 import getpass
 import numpy as np
@@ -13,8 +14,9 @@ cfg = Configure()
 
 def main():
     #set_config()
-    set_database()
+    #set_database()
     #set_package()
+    set_vuescan()
 
 
 # config file
@@ -136,12 +138,26 @@ def set_package():
 # VueScan setting
 #==================================================
 
+from clive.setup.auto_vuescan import gui_setup
+
 def set_vuescan():
+    gui_setup()
+
+
+
+# Clip layout
+#==================================================
+
+from clive.setup.clip_layout import layout_setup
+
+def set_layout():
     try:
         os.system("vuescan")
     except:
         print "Cannot run VueScan"
         quit()
+
+    gui_setup()
 
 
 
