@@ -21,9 +21,12 @@ from clive.core.version import get_version
 from clive.core.conf import Configure
 from clive.io.tmp import DIR_TMP
 from clive.db.handler import ScannerHandler, ExpHandler, PersonHandler
-from monitor import ScanStatus, ScanOrder
-from scheduler import ScheduleManager
+from monitor import get_status
+from adduser import add_user
+from register import make_reservation
 from download import make_growth_csv, make_images_tar
+from scheduler import make_schedule_table, make_calender, cancel_schedule
+from scan_control import get_list, scan_start, scan_abort
 
 cfg = Configure()
 SCANNER_IDS = map(int,cfg[('scan','scanner_ids')].split(","))
@@ -33,10 +36,6 @@ VERSION = get_version()
 scanner_handler = ScannerHandler()
 exp_handler = ExpHandler()
 person_handler = PersonHandler()
-schedule_manager = ScheduleManager()
-scan_status = ScanStatus()
-scan_start = ScanOrder('start')
-scan_abort = ScanOrder('abort')
 
 urls = (
     '/', 'login',
@@ -138,15 +137,10 @@ class Userreg:
 
     def POST(self):
         inputs = web.input()
-        
-        opts = " ".join([
-            inputs.user, 
-            inputs.password,
-            inputs.name,
-            inputs.email])
-        res = commands.getoutput("python ./adduser.py %s" % opts)
-        outs = [i.replace("\n","<br>") for i in res]
-        output = "".join(map(str,outs))
+        output = add_user(inputs.user,
+                inputs.password,
+                inputs.name,
+                inputs.email)
         return render.user_reg('user_reg', output)
 
 
@@ -171,19 +165,17 @@ class Expreg:
             inputs.day,
             inputs.hour
             )
-
-        opts = " ".join([
+        values = [
             str(session.person_id),
             inputs.project,
             dt_start,
             inputs.plate_ids,
             inputs.medium,
             inputs.h_scan,
-            "'"+conditions_key+"'",
-            "'"+conditions_value+"'"])
-        res = commands.getoutput("python ./register.py %s" % opts)
-        tmp = [i for i in res]
-        output = "".join(map(str,tmp))
+            conditions_key,
+            conditions_value]
+
+        output = make_reservation(values)
         year, month, day, hour = self._get_dt()
         return render.exp_reg('exp_reg', output, year, month, day, hour)
         
@@ -200,33 +192,20 @@ class Regmanage:
     def GET(self):
         check_login()
         inputs = session.scan_inputs
-        schedule_manager.reload()
         
-        table = self._make_table()
-        calender = self._make_calender()
+        table = make_schedule_table()
+        calender = make_calender()
         return render.reg_manage(self.title, table, calender)
 
     def POST(self):
         inputs = web.input()
         session.scan_inputs = inputs
-        schedule_manager.cancel(int(inputs.cancel_ind))
-        schedule_manager.reload()
-        table = schedule_manager.make_table()
-        calender = schedule_manager.make_calender()
+        
+        cancel_schedule(int(inputs.cancel_ind))
+        table = make_schedule_table()
+        calender = make_calender()
         return render.reg_manage(self.title, table, calender)
     
-    def _make_table(self):
-        res = commands.getoutput("python ./scheduler.py table")
-        tmp = [i for i in res]
-        html = "".join(map(str,tmp))
-        return html
-    
-    def _make_calender(self):
-        res = commands.getoutput("python ./scheduler.py calender")
-        tmp = [i for i in res]
-        html = "".join(map(str,tmp))
-        return html
-
 
 #
 # Scanning monitor
@@ -236,31 +215,26 @@ class monitor:
 
     def GET(self):
         check_login()
-        status = scan_status.make_table()
-        start = scan_start.make_button(session.person_id)
-        abort = scan_abort.make_button(session.person_id)
-        return render.monitor(self.title, status, start, abort)
+        status = get_status()
+        cont = get_list(session.person_id)
+        return render.monitor(self.title, status, cont)
 
     def POST(self):
-        error = ''
-        out = ''
         inputs = web.input()
+        ref_code = inputs.keys()[0]
+        btype, ind = ref_code.split("-")
+        ind = int(ind)
         
         # run
-        if inputs.keys()[0].startswith("start"):
-            ref_code = inputs.keys()[0]
-            ind = int(ref_code.split('-')[1])
-            scan_start.submit(ind)
+        if btype == "start":
+            scan_start(session.person_id, ind) 
         # stop
-        if inputs.keys()[0].startswith("abort"):
-            ref_code = inputs.keys()[0]
-            ind = int(ref_code.split('-')[1])
-            scan_abort.submit(ind)
+        if btype == "abort":
+            scan_abort(session.person_id, ind) 
 
-        status = scan_status.make_table()
-        start = scan_start.make_button(session.person_id)
-        abort = scan_abort.make_button(session.person_id)
-        return render.monitor(self.title, status, start, abort)
+        status = get_status()
+        cont = get_list(session.person_id)
+        return render.monitor(self.title, status, cont)
 
 
 class Download:

@@ -22,28 +22,26 @@ cfg = Configure()
 SCANNER_IDS = map(int,cfg[('scan','scanner_ids')].split(","))
 
 
-def main(values):
+def make_reservation(values):
     # decode input
     try:
         person_id, project, dt_start, plate_ids, medium, h_scan, conditions\
             = decode_order(values)
     except:
-        quit_with_msgs(['Wrong input.'])
-    
+        return error_msg(['Wrong input.'])
+
     # reserve scanner
     n_plates = len(plate_ids)
     scanposs = schedule_manager.reserve(
         SCANNER_IDS, dt_start, h_scan, n_plates)
     if len(scanposs) == 0:
-        quit_with_msgs(['No space.'])
+        return error_msg(['No space.'])
    
     # record experiment info
     exps = []
     for plate_id, condition, scanpos in zip(plate_ids, conditions, scanposs):
         exp = exp_handler.create(person_id, project, plate_id, medium, dt_start, condition, h_scan, scanpos)
         exps += [exp]
-
-    print "<h2>Success!!</h2>"
 
     # make csv table, then report 
     dt_now = datetime.datetime.now()
@@ -53,14 +51,17 @@ def main(values):
     report_by_email(person_id, fname)
     cmd = "rm %s" % fname
     os.system(cmd) 
+    
+    return "<h2>Success!!</h2>\n"
 
-def quit_with_msgs(msgs):
-    print "<span style='color:#FF0000'>"
-    print "<h2>Error</h2>"
+def error_msg(msgs):
+    html = "<span style='color:#FF0000'>\n"
+    html += "<h2>Error</h2>\n"
     for msg in msgs:
-        print msg
-    print "</span>"
-    quit()
+        html += msg + "\n"
+    html += "</span>\n"
+    return html
+
 
 def write_csv_table(fname, exps):
     w = csv.writer(open(fname, 'wb'))
@@ -108,6 +109,7 @@ def decode_order(values):
     return person_id, project, dt_plan, plate_ids, medium, h_scan, conditions
 
 
+
 def report_by_email(person_id, fname):
     name = person_handler.get_name(person_id)
     email = person_handler.get_email(person_id)
@@ -122,4 +124,5 @@ if __name__ == "__main__":
     if len(argvs) != 9:
         quit("usage: %s [person_id] [project] [dt_start] [plate_ids] [medium] [h_scan] [conditions_key] [conditions_value]" % argvs[0])
     values = argvs[1:]
-    main(values)
+    print make_reservation(values)
+

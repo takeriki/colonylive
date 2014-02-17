@@ -16,6 +16,7 @@ from clive.io.imgio import ExpTmpImgIO, ScanImgIO
 from clive.db.handler import ScannerHandler, ImgscanHandler, ImgHandler
 from clive.db.manager import ExpManager
 from gui_scan import gui_scan
+from prep import prep_gui
 from imgcrip import clip_scanimg
 
 scanner_handler = ScannerHandler()
@@ -30,6 +31,8 @@ VERSION = get_version()
 
 # Loop
 def keep_scan():
+    prep_gui()
+
     if TEST_MODE:
         while True:
             print '[test-mode]'
@@ -87,7 +90,9 @@ def run():
         print "until %s " % scanner.dt_finish.strftime('%a, %d %b %Y'),
         img_scan = img_scan_handler.create(scanner.id, scanner.exp_ids)
         scanimg = ScanImgIO(img_scan.id)
-        fail = gui_scan(scanner.id, scanimg.path)
+        
+        ind = SCANNER_IDS.index(scanner.id) + 1
+        fail = gui_scan(ind, scanimg.path)
         #fail = 0
         if fail:
             print "[Faild]"

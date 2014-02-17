@@ -5,9 +5,11 @@
 
 """
 
-from multiprocessing import Process
-
 from clive.web.code import app
 
-app.run()
+def start_web():
+    app.run()
 
+
+if __name__ == "__main__":
+    start_web()

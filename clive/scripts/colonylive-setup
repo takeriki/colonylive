@@ -16,7 +16,8 @@ def main():
     #set_config()
     #set_database()
     #set_package()
-    set_vuescan()
+    #set_vuescan()
+    set_layout()
 
 
 # config file
@@ -141,6 +142,19 @@ def set_package():
 from clive.setup.auto_vuescan import gui_setup
 
 def set_vuescan():
+    os.system('clear')
+    print "VueScan Setting"
+    print "========================="
+    print 
+    
+    if cfg[('vuescan','pos_input_tab')] != "":
+        while True:
+            ans = raw_input("Re-setup? yes or no:")
+            if ans in ["yes", 'y']:
+                break
+            if ans in ["no", 'n']:
+                return
+
     gui_setup()
 
 
@@ -149,15 +163,41 @@ def set_vuescan():
 #==================================================
 
 from clive.setup.clip_layout import layout_setup
+from clive.scan.gui_scan import gui_scan
+from clive.scan.prep import prep_gui
 
 def set_layout():
-    try:
-        os.system("vuescan")
-    except:
-        print "Cannot run VueScan"
-        quit()
+    os.system('clear')
+    print "Scan layout Setting"
+    print "========================="
+    print
+    
+    print "Which scanner you will use for setup?"
+    sids = cfg[('scan','scanner_ids')]
+    print "Available scanner IDs: %s" % sids
+    while True:
+        ans = raw_input("scanner ID:")
+        if ans in sids:
+            sid = int(ans)
+            break
+    
+    print "Set all test plates on the scanner ID %d, then type 'yes' & enter" % sid
+    while True:
+        ans = raw_input()
+        if ans in ["yes"]:
+            break
+    
+    prep_gui()
 
-    gui_setup()
+    gui_scan(sid, "layout_set.tif")
+    
+    print "starting Inkscape..."
+    print "Draw red box on the test plates, then save as png file"
+    print "Press enter"
+    raw_input()
+    
+    print 
+    layout_setup()
 
 
 

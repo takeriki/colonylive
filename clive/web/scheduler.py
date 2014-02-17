@@ -185,12 +185,20 @@ class ScheduleManager():
         return dt_sf
 
 
-def main(ptype):
+def make_schedule_table():
     schedule_manager = ScheduleManager()
-    if ptype == "table":
-        print schedule_manager.make_table()
-    if ptype == "calender":
-        print schedule_manager.make_calender()
+    schedule_manager.reload()
+    return schedule_manager.make_table()
+
+def make_calender():
+    schedule_manager = ScheduleManager()
+    schedule_manager.reload()
+    return schedule_manager.make_calender()
+
+def cancel_schedule(cancel_ind):
+    schedule_manager = ScheduleManager()
+    schedule_manager.cancel(cancel_ind)
+    schedule_manager.reload()
 
 
 if __name__ == "__main__":
@@ -198,4 +206,8 @@ if __name__ == "__main__":
     if len(argvs) != 2:
         quit("usage: %s ['table' or 'calender']" % argvs[0])
     ptype = argvs[1]
-    main(ptype)
+    if ptype == "table":
+        make_schedule_table()
+    if ptype == "calender":
+        make_calender()
+

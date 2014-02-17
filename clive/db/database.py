@@ -24,6 +24,10 @@ class DB:
         Session = sessionmaker(bind=self.engine)
         self.session = Session()
 
+    def reconnect(self):
+        self.session.close()
+        Session = sessionmaker(bind=self.engine)
+        self.session = Session()
 
 if __name__ == "__main__":
     db = DB()

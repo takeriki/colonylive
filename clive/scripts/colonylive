@@ -1,14 +1,20 @@
 #!/usr/bin/python
 
-import sys
-import getpass
-import numpy as np
+from subprocess import call
+from multiprocessing import Process
 
-from clive-analysis import peform_analysis
+
+def start_scan():
+    call(["./clive_scan"])
+
+
+def start_web():
+    call(["./clive_web"])
 
 
 jobs = []
-jobs += [Process(target=perform_analysis, )]
+jobs += [Process(target=start_web, )]
+jobs += [Process(target=start_scan, )]
 
 for j in jobs:
     j.start()

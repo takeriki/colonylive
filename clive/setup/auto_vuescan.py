@@ -8,21 +8,12 @@ import os
 import time
 
 from clive.core.conf import Configure
+from clive.scan.prep import prep_gui
 cfg = Configure()
 
 def gui_setup():
     print "start to GUI position setting for VueScan."
-    if check_vuescan():
-        print "Running VueScan: OK"
-    else:
-        try:
-            os.system("vuescan &")
-            time.sleep(5)
-            # window setting
-            os.system("wmctrl -r VueScan -b add,maximized_vert,maximized_horz")
-        except:
-            print "Cannot run VueScan"
-            quit()
+    prep_gui()
     
     # window setting
     os.system("wmctrl -a terminal")
@@ -65,14 +56,6 @@ def stop_scan():
     os.system("xte 'mouseclick 1'")
     time.sleep(1)
     os.system("wmctrl -a terminal")
-
-
-def check_vuescan():
-    output = commands.getoutput("wmctrl -l")
-    for line in output.split('\n'):
-        if line.find('VueScan') != -1:
-            return 1
-    return 0
 
 
 def _get_mouse_pos(msg):

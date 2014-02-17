@@ -124,6 +124,7 @@ class ExpHandler():
             )).order_by(Exp.dt_start).all()
     
     def get_reserved_exps(self):
+        self.db.reconnect()
         return self.db.session.query(Exp).filter(
             Exp.step_done == 0
             ).order_by(Exp.dt_start).all()

@@ -1,0 +1,27 @@
+#!/usr/bin/env python
+
+"""
+ Start periodic scanning to measure colony growth
+
+"""
+
+from multiprocessing import Process
+
+from clive.scan.cleaner import keep_clean
+from clive.scan.cycle_scan import keep_scan
+
+def start_scan():
+    jobs = []
+    jobs += [Process(target=keep_clean, )]
+    jobs += [Process(target=keep_scan, )]
+
+    for j in jobs:
+        j.start()
+    for j in jobs:
+        j.join()
+
+    print "stop"
+
+
+if __name__ == "__main__":
+    start_scan()
