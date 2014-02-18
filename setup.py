@@ -8,9 +8,9 @@ setup(
     scripts=[
             'clive/scripts/colonylive',
             'clive/scripts/colonylive-setup',
-            'clive/scripts/clive-scan',
-            'clive/scripts/clive-web',
-            'clive/scripts/clive-analysis',
+            'clive/scripts/clive_scan',
+            'clive/scripts/clive_web',
+            'clive/scripts/clive_analysis',
             ],
 
     extras_require = {
