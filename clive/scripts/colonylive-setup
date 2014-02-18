@@ -77,12 +77,13 @@ def set_config():
 # Database setting
 #==================================================
 
-from clive.db.database import DB
-from clive.db.schema import make_all_tables
-from clive.db.handler import ScannerHandler
-scanner_handler = ScannerHandler()
 
 def set_database():
+    from clive.db.database import DB
+    from clive.db.schema import make_all_tables
+    from clive.db.handler import ScannerHandler
+    scanner_handler = ScannerHandler()
+
     os.system('clear')
     print "Database Setting"
     print "========================="
@@ -139,9 +140,9 @@ def set_package():
 # VueScan setting
 #==================================================
 
-from clive.setup.auto_vuescan import gui_setup
-
 def set_vuescan():
+    from clive.setup.auto_vuescan import gui_setup
+
     os.system('clear')
     print "VueScan Setting"
     print "========================="
@@ -162,11 +163,11 @@ def set_vuescan():
 # Clip layout
 #==================================================
 
-from clive.setup.clip_layout import layout_setup
-from clive.scan.gui_scan import gui_scan
-from clive.scan.prep import prep_gui
-
 def set_layout():
+    from clive.setup.clip_layout import layout_setup
+    from clive.scan.gui_scan import gui_scan
+    from clive.scan.prep import prep_gui
+
     os.system('clear')
     print "Scan layout Setting"
     print "========================="

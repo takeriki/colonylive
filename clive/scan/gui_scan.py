@@ -10,6 +10,7 @@ import sys
 import subprocess as sp
 
 from clive.core.conf import Configure
+from prep import back_to_terminal
 cfg = Configure()
 
 POS_INPUT_TAB = cfg[('vuescan','pos_input_tab')]
@@ -124,14 +125,6 @@ def turn_off_head_light():
     time.sleep(1)
     os.system("xte 'mouseclick 1'")
     time.sleep(5)
-    return
-
-
-def back_to_terminal():
-    # Just in case, escape from save window
-    os.system("xte 'key Escape'")
-    # Focus to terminal window
-    os.system("wmctrl -a terminal")
     return
 
 
