@@ -13,9 +13,9 @@ cfg = Configure()
 
 
 def main():
+    set_package()
     set_config()
     set_database()
-    set_package()
     set_vuescan()
     set_layout()
 
@@ -118,7 +118,7 @@ def set_package():
     sp.call('sudo apt-get -qq update',shell=True)
     items = [
         'r-base',
-        'openssh-server',
+        'mysql-server',
         'ntpdate',
         'xautomation',
         'wmctrl',
