@@ -62,7 +62,6 @@ def initialize():
     time.sleep(1)
     os.system("xte 'key l'")
     time.sleep(2)
-    os.system("xte 'key r'")
     os.system("xte 'key Return'")
     time.sleep(5)
     

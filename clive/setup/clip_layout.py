@@ -44,7 +44,7 @@ def layout_setup(fpath):
     print "-----------------"
 
     posids = set(range(1,n_plates+1))
-    cfg[('scanlayout','number')] = n_plates
+    cfg[('scanlayout','number')] = str(n_plates)
     for contour in contours:
         tary = ary.copy()
         xy_center = get_center(contour)
@@ -68,6 +68,7 @@ def layout_setup(fpath):
         xy_corners_str = "/".join(tmp)
         layout = "|".join(map(str, 
             [xy_corners_str, num_rot, deg]))
+        print layout
         cfg[('scanlayout','%d'%posid)] = layout
     cfg.update()
     print "-----------------"

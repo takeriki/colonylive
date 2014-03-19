@@ -13,11 +13,46 @@ cfg = Configure()
 
 
 def main():
-    set_package()
-    set_config()
-    set_database()
-    set_vuescan()
+    #set_package()
+    #set_config()
+    #set_database()
+    #set_vuescan()
     set_layout()
+
+
+# Install packages
+#==================================================
+
+def set_package():
+    os.system('clear')
+    print "Install packages"
+    print "========================="
+    print 
+    print "updating package info..."
+    sp.call('sudo apt-get -qq update',shell=True)
+    items = [
+        'r-base',
+        'mysql-server',
+        'ntpdate',
+        'xautomation',
+        'wmctrl',
+        'python-mysqldb',
+        'python-numpy',
+        'python-scipy',
+        'python-opencv',
+        'python-matplotlib',
+        'python-sqlalchemy',
+        'python-rpy2',
+        'python-webpy'
+        ]
+    for item in items:
+        print "install %s" % item
+        cmd = 'sudo apt-get -qq -y install %s' % item
+        sp.call(cmd,shell=True)
+
+    print "\nDONE"
+    raw_input("Press Enter...")
+
 
 
 # config file
@@ -63,13 +98,7 @@ def set_config():
     print "\nConnected scanner IDs -- e.g.) 1,2,3"
     set_value('- IDs', ('scan','scanner_ids'))
 
-    print "\nMySQL database"
-    set_value('- Host', ('db','host'))
-    set_value('- Database', ('db','db'))
-    set_value('- Port', ('db','port'))
-    set_value('- User', ('db','user'))
-    set_value('- Password', ('db','pass'))
-    print "[OK]"
+    print "\nDONE"
     raw_input("Press Enter...")
 
 
@@ -92,48 +121,39 @@ def set_database():
     try:
         db.session.execute("show tables")
     except:
-        print "Cannot connect to MySQL database"
-        print "Check MySQL account information"
+        create_user_and_db()
+        try:
+            create_user_and_db()
+        except:
+            print "Cannot connect to MySQL database"
         quit()
+    
     make_all_tables()
     
+    # create sid
     sids = map(int, cfg[('scan','scanner_ids')].split(","))
     for sid in sids:
         try:
             scanner_handler.load(sid)
         except:
             scanner_handler.create(sid)
-    print "[OK]"
+    
+    print "\nDONE"
     raw_input("Press Enter...")
 
 
-# Install packages
-#==================================================
-
-def set_package():
-    os.system('clear')
-    print "Install packages"
-    print "========================="
-    print 
-    sp.call('sudo apt-get -qq update',shell=True)
-    items = [
-        'r-base',
-        'mysql-server',
-        'ntpdate',
-        'xautomation',
-        'wmctrl',
-        'python-mysqldb',
-        'python-numpy',
-        'python-scipy',
-        'python-opencv',
-        'python-matplotlib',
-        'python-rpy2',
-        'python-webpy'
-        ]
-    cmd = 'sudo apt-get -qq -y install ' + " ".join(items)
+def create_user_and_db():
+    host = cfg[('db','host')]
+    port = cfg[('db','port')]
+    dbname = cfg[('db','db')]
+    user = cfg[('db','user')]
+    passwd = cfg[('db','pass')]
+    cmd = "mysql -h %s -P %s -u root -p mysql -e \"GRANT ALL ON *.* TO %s@'localhost' IDENTIFIED BY '%s'; FLUSH PRIVILEGES;\"" % (host, port, user, passwd)
+    print "Enter password of MySQL root (not system root!)"
     sp.call(cmd,shell=True)
-    print "[OK]"
-    raw_input("Press Enter...")
+    
+    cmd = "mysql -h %s -P %s -u %s -p%s -e \"CREATE DATABASE %s IF NOT EXISTS\"" % (host, port, user, passwd, dbname)
+    sp.call(cmd,shell=True)
 
 
 
@@ -142,6 +162,7 @@ def set_package():
 
 def set_vuescan():
     from clive.setup.auto_vuescan import gui_setup
+    from clive.setup.conf_vuescan import make_conf
 
     os.system('clear')
     print "VueScan Setting"
@@ -157,6 +178,10 @@ def set_vuescan():
                 return
 
     gui_setup()
+    make_conf()
+    
+    print "\nDONE"
+    raw_input("Press Enter...")
 
 
 
@@ -182,11 +207,11 @@ def set_layout():
             sid = int(ans)
             break
     
-    print "Set all test plates on the scanner ID %d, then type 'yes' & enter" % sid
-    while True:
-        ans = raw_input()
-        if ans in ["yes"]:
-            break
+    print "Set all test plates on the scanner ID %d, then press enter" % sid
+    raw_input("Press enter:")
+    
+    print "Start scanning... Don't touch mouse and keyboard during the scanning"
+    raw_input("Press enter:")
     
     prep_gui()
 
@@ -194,12 +219,15 @@ def set_layout():
     
     print "starting Inkscape..."
     print "Draw red box on the test plates, then save as png file"
-    print "Press enter"
-    raw_input()
-    
-    print 
-    layout_setup()
+    raw_input("Press enter:")
 
+    cmd = "inkscape layout_set.tif"
+    sp.call(cmd,shell=True)
+    
+    layout_setup("layout_set.png")
+
+    print "\nDONE"
+    raw_input("Press Enter...")
 
 
 if __name__ == "__main__":
