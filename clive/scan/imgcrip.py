@@ -30,6 +30,7 @@ def clip_scanimg(fpath_in, fpath_outs):
     ary = cv2.imread(fpath_in)
     
     for fpath_out, clipinfo in zip(fpath_outs, clipinfos):
+        print fpath_out
         cary = clip_img(ary, clipinfo)
         cv2.imwrite(fpath_out, cary)
         cmd = "touch -r %s %s" % (fpath_in, fpath_out)

@@ -14,27 +14,27 @@ FOLDER_TMP = cfg[('folder','img_tmp')]
 FOLDER_IMG_STORE = cfg[('folder','img_store')]
 
 
-class ExpImgIO():
-    def fetch_img_files(self, path_in):
-        if not os.path.exists(path_in):
-            cmd = "mkdir -p %s" % path_in
-            os.system(cmd)
-        
-        print "fetching image..."
-        if not os.path.exists(path_in+"/%d"%self.exp_id):
-            cmd = "scp -q gi-bioserv:/ngs/clive/img/%d.zip %s/" % (exp_id, path_in)
-            os.system(cmd)
-            
-            cwd = os.getcwd()
-            os.chdir(path_in)
-            fname = "%s/%d" % (path_in, self.exp_id)
-            cmd = "unzip %s.zip && rm %s.zip" % (fname, fname)
-            os.system(cmd)
-            os.chdir(cwd)
-
-    def remove_img_files(self, path_in):
-        cmd = "rm -rf %s/%d" % (path_in, self.exp_id)
+def fetch_img_files(path_in, exp_id):
+    if not os.path.exists(path_in):
+        cmd = "mkdir -p %s" % path_in
         os.system(cmd)
+    
+    print "fetching image..."
+    if not os.path.exists(path_in+"/%d" % exp_id):
+        #cmd = "scp -q gi-bioserv:/ngs/clive/img/%d.zip %s/" % (exp_id, path_in)
+        cmd = "cp /home/morilab/img/%d.zip %s/" % (exp_id, path_in)
+        os.system(cmd)
+        
+        cwd = os.getcwd()
+        os.chdir(path_in)
+        fname = "%s/%d" % (path_in, exp_id)
+        cmd = "unzip -q %s.zip && rm %s.zip" % (fname, fname)
+        os.system(cmd)
+        os.chdir(cwd)
+
+def remove_img_files(path_in, exp_id):
+    cmd = "rm -rf %s/%d" % (path_in, exp_id)
+    os.system(cmd)
 
 
 class ExpTmpImgIO():

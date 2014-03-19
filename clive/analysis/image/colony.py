@@ -123,7 +123,7 @@ if __name__ == "__main__":
     f.close()
     
     img_color = Image()
-    img_color.load_file('45.tif')
+    img_color.load_file('sample/plate.jpg')
     img_gray = img_color.convert_to_gray()
     gpos2colony = get_colony(img_gray, ary_index_map, grid)
 

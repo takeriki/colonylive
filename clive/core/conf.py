@@ -74,6 +74,13 @@ class Configure():
         (('scan','scanner_ids'),''),
         (('scan','min_cycle'),'30'),
         (('scan','days_scan_keep'),'30'),
+        
+        (('colony','r_center_mass'),'8'),
+
+        (('growth','od_limit'),'1'),
+        (('growth','point_number_use'),'100'),
+        (('growth','frac_limit_ip'),'0.8'),
+        (('growth','min_fixed_time_point'),'1200'),
 
         (('vuescan','pos_input_tab'),''),
         (('vuescan','pos_source'),''),
