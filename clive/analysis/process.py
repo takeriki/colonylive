@@ -67,9 +67,9 @@ def execute(exp_id, step):
         if step <= 3:
             growth_normalize(expman)
         print "Succeed"
-    except:
+    except Exception as e:
         expman.set_failure(1)
-        print "Failed"
+        print str(e)
     finally:
         expman.set_in_process(0)
 

@@ -3,7 +3,7 @@ Periodic scanning
 
 """
 
-TEST_MODE = 1
+TEST_MODE = 0
 
 import os
 import time
@@ -72,6 +72,7 @@ def run():
         exp_ids = map(int, scanner.exp_ids.split("|"))
 
         # stop?
+        """
         if scanner.dt_finish < dt_now:
             print "Complete!!"
             tmpimgs = [ExpTmpImgIO(i) for i in exp_ids]
@@ -84,6 +85,7 @@ def run():
             expman.set_step_done(1)
             scanner_handler.clean(scanner)
             continue
+        """
         
         # Perform scan
         print "%s; " % scanner.person_name,
@@ -99,6 +101,7 @@ def run():
             continue
         print "[Success]"
         
+        continue
         # Registration
         if scanner.min_grows in [None, '']:
             min_grows = []

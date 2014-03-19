@@ -14,6 +14,7 @@ def get_colonypack(path, ncol, nrow):
     cwd = os.getcwd()
     os.chdir(path)
     fnames = sorted(os.listdir('.'))
+    #fnames = fnames[0:101]
     
     fname = fnames[-1]
     sys.stdout.write("Pre-scanning...")

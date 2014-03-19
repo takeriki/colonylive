@@ -96,22 +96,20 @@ def _get_init(vs, n_line):
                     vs.pop(ind)
         '''
         print 'error of grid number:'
-        print "expect: %d" % n
+        print "expect: %d" % n_line
         print "actual: %d" % len(vs)
         quit()
     v_init = vs[0]
     return int(v_init)
 
 
-
 def draw_grid_lines(grid):
-    lines = grid.make_lines()
     img_color = Image()
-    img_color.load_file('45.tif')
+    img_color.load_file('sample/plate.jpg')
 
     x_sta, y_sta = grid.xy_init
-    x_end = int(x_init + (grid.ncol-1) * grid.x_dif)
-    y_end = int(y_init + (grid.nrow-1) * grid.y_dif)
+    x_end = int(x_sta + (grid.ncol-1) * grid.x_dif)
+    y_end = int(y_sta + (grid.nrow-1) * grid.y_dif)
     x_dif = grid.x_dif
     y_dif = grid.y_dif
     lines = []
@@ -119,7 +117,7 @@ def draw_grid_lines(grid):
         x = int(x_sta + grid.x_dif * (col-1))
         line = ((x, y_sta), (x, y_end))
         lines.append(line)
-    for row in range(1,grid_nrow+1):
+    for row in range(1,grid.nrow+1):
         y = int(y_sta + grid.y_dif * (row-1))
         line = ((x_sta, y), (x_end, y))
         lines.append(line)
@@ -134,7 +132,6 @@ if __name__ == "__main__":
     ary_index_map = np.load('index_map.npy')
     grid = detect_grid(ncol, nrow, ary_index_map)
     print grid.xy_init
-    quit()
 
     draw_grid_lines(grid)
 
