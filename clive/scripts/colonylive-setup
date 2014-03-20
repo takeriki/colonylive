@@ -13,10 +13,10 @@ cfg = Configure()
 
 
 def main():
-    #set_package()
-    #set_config()
-    #set_database()
-    #set_vuescan()
+    set_package()
+    set_config()
+    set_database()
+    set_vuescan()
     set_layout()
 
 
@@ -121,12 +121,11 @@ def set_database():
     try:
         db.session.execute("show tables")
     except:
-        create_user_and_db()
         try:
             create_user_and_db()
         except:
             print "Cannot connect to MySQL database"
-        quit()
+        db.session.execute("show tables")
     
     make_all_tables()
     
@@ -152,7 +151,7 @@ def create_user_and_db():
     print "Enter password of MySQL root (not system root!)"
     sp.call(cmd,shell=True)
     
-    cmd = "mysql -h %s -P %s -u %s -p%s -e \"CREATE DATABASE %s IF NOT EXISTS\"" % (host, port, user, passwd, dbname)
+    cmd = "mysql -h %s -P %s -u %s -p%s -e \"CREATE DATABASE %s\"" % (host, port, user, passwd, dbname)
     sp.call(cmd,shell=True)
 
 
