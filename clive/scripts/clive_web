@@ -5,6 +5,9 @@
 
 """
 
+import clive.web.code
+
+print clive.web.code.__file__
 from clive.web.code import app
 
 def start_web():

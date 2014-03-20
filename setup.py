@@ -3,8 +3,13 @@ from setuptools import setup, find_packages
 setup(
     name='colonylive',
     version='1.0',
+    #packages = find_packages(),
     packages = find_packages(),
     #install_requires=['numpy','scipy','rpy2','web.py'],
+    package_data = {'clive':["web/templates/*", "web/static/styles/*"]},
+    
+    include_package_data = True,
+
     scripts=[
             'clive/scripts/colonylive',
             'clive/scripts/colonylive-setup',
