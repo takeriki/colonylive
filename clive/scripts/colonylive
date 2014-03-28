@@ -1,20 +1,23 @@
-#!/usr/bin/python
+#!/usr/bin/env python2
 
 from subprocess import call
 from multiprocessing import Process
 
 
 def start_scan():
-    call(["./clive_scan"])
-
+    call(["clive_scan"])
 
 def start_web():
-    call(["./clive_web"])
+    call(["clive_web"])
+
+def start_analysis():
+    call(["clive_analysis"])
 
 
 jobs = []
 jobs += [Process(target=start_web, )]
 jobs += [Process(target=start_scan, )]
+jobs += [Process(target=start_analysis, )]
 
 for j in jobs:
     j.start()
