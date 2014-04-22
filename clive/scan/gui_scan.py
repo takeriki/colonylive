@@ -130,7 +130,7 @@ def turn_off_head_light():
 def treat_timeout(scanner, fname):
     os.system("xte 'mousemove %s'" % POS_ABORT)
     os.system("xte 'mouseclick 1'")
-    error_msg = "%s: timeout, scanner=%s, out=%s" % (now_dt, scanner, fname)
+    error_msg = "timeout, scanner=%s, out=%s" % (scanner, fname)
     f = open('error.log', 'a')
     f.write(error_msg + '\n')
     f.close()
