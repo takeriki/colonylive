@@ -6,6 +6,18 @@ see http://ecoli.naist.jp/colonylive/
 A high-throughput method to measure colony growth kinetics
 
 
+ver 1.0  bug多し(web不安定,解析に失敗する)
+ver 1.1  1.0のbugを大幅にfixした
+
+
+Requirement
+===========
+
+xautomation
+wmctrl
+vuescan
+
+
 License
 =======
 

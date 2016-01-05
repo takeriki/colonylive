@@ -8,7 +8,7 @@ import time
 import datetime
 import glob
 
-from clive.core.conf import Configure
+from lib.core.conf import Configure
 
 cfg = Configure()
 DAYS_KEEP = cfg[('scan','days_scan_keep')]

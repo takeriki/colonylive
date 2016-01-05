@@ -8,27 +8,23 @@ import os
 import sys
 import math
 import cv2
-import numpy as np
-import matplotlib.pylab as plt
-from matplotlib import interactive
-interactive(True)
 
 from clive.core.conf import Configure
 cfg = Configure()
 
-clipinfos = []
-npos = int(cfg[('scanlayout','number')])
-for pos in range(1,npos+1):
-    tmp = cfg[('scanlayout','%d' % pos)].split("|")
-    xy_corners = [map(int,i.split("-")) for i in tmp[0].split("/")]
-    num_rot = int(tmp[1])  
-    deg = float(tmp[2])
-    clipinfos += [(xy_corners, num_rot, deg)]
 
-
-def clip_scanimg(fpath_in, fpath_outs):
+def clip_scanimg(fpath_in, fpath_outs, cfg):
     ary = cv2.imread(fpath_in)
-    
+    npos = int(cfg[('scanlayout','number')])
+
+    clipinfos = []
+    for pos in range(1,npos+1):
+        tmp = cfg[('scanlayout','%d' % pos)].split("|")
+        xy_corners = [map(int,i.split("-")) for i in tmp[0].split("/")]
+        num_rot = int(tmp[1])  
+        deg = float(tmp[2])
+        clipinfos += [(xy_corners, num_rot, deg)]
+
     for fpath_out, clipinfo in zip(fpath_outs, clipinfos):
         print fpath_out
         cary = clip_img(ary, clipinfo)

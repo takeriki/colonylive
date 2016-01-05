@@ -6,40 +6,36 @@ automatic GUI operation for VueScan
 import commands
 import os
 import time
-import sys
-import subprocess as sp
 
-from clive.core.conf import Configure
 from prep import back_to_terminal
-cfg = Configure()
-
-POS_INPUT_TAB = cfg[('vuescan','pos_input_tab')]
-POS_SOURCE = cfg[('vuescan','pos_source')]
-POS_MODE = cfg[('vuescan','pos_mode')]
-POS_ABORT = cfg[('vuescan','pos_abort')]
-SEC_WAIT_LIMIT = int(cfg[('vuescan','sec_scan_wait')])
 
 
-def gui_scan(scanner, fname):
+def gui_scan(scanner, fname, cfg):
     fname = fname.replace(".tif","")
+    inputtab = cfg[('vuescan','coordinate_inputtab')]
+    source = cfg[('vuescan','coordinate_source')]
+    mode = cfg[('vuescan','coordinate_mode')]
+    abort = cfg[('vuescan','coordinate_abort')]
+    scanwait = int(cfg[('vuescan','sec_scanwait')])
+
     initialize()
-    start_scan(scanner)
-    no_window = wait_scanned_window()
+    start_scan(scanner, inputtab, source) 
+    no_window = wait_scanned_window(scanwait)
     if no_window:
-        treat_timeout(scanner, fname)    
-        turn_off_head_light()
+        treat_timeout(scanner, fname, abort)
+        turn_off_head_light(mode, abort)
         return 1
     save_scanned_pict(fname)
-    turn_off_head_light()
+    turn_off_head_light(mode, abort)
     back_to_terminal()
     return 0
 
 
-def wait_scanned_window():
+def wait_scanned_window(sec_wait):
     i = 0
     while True:
         # print i
-        if SEC_WAIT_LIMIT < i:
+        if sec_wait < i:
             print 'timeout'
             return 1 
         output = commands.getoutput("wmctrl -l")
@@ -66,13 +62,13 @@ def initialize():
     time.sleep(5)
     
 
-def start_scan(scanner):
+def start_scan(scanner, coordinate_inputtab, coordinate_source):
     # Move to input setting
-    os.system("xte 'mousemove %s'" % POS_INPUT_TAB)
+    os.system("xte 'mousemove %s'" % coordinate_inputtab)
     os.system("xte 'mouseclick 1'")
     
     # select scanner
-    os.system("xte 'mousemove %s'" % POS_SOURCE)
+    os.system("xte 'mousemove %s'" % coordinate_source)
     os.system("xte 'mouseclick 1'")
     time.sleep(2)
 
@@ -106,8 +102,8 @@ def save_scanned_pict(fname):
     return
 
 
-def turn_off_head_light():
-    os.system("xte 'mousemove %s'" % POS_MODE)
+def turn_off_head_light(coordinate_mode, coordinate_abort):
+    os.system("xte 'mousemove %s'" % coordinate_mode)
     os.system("xte 'mouseclick 1'")
     time.sleep(2)
     os.system("xte 'key Up'")
@@ -120,15 +116,15 @@ def turn_off_head_light():
     os.system("xte 'key i'")
     os.system("xte 'keyup Control_L'")
     time.sleep(3)
-    os.system("xte 'mousemove %s'" % POS_ABORT)
+    os.system("xte 'mousemove %s'" % coordinate_abort)
     time.sleep(1)
     os.system("xte 'mouseclick 1'")
     time.sleep(5)
     return
 
 
-def treat_timeout(scanner, fname):
-    os.system("xte 'mousemove %s'" % POS_ABORT)
+def treat_timeout(scanner, fname, coordinate_abort):
+    os.system("xte 'mousemove %s'" % coordinate_abort)
     os.system("xte 'mouseclick 1'")
     error_msg = "timeout, scanner=%s, out=%s" % (scanner, fname)
     f = open('error.log', 'a')

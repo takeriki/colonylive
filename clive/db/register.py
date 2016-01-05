@@ -8,22 +8,16 @@ import datetime
 import time
 import numpy as np
 
-import send_mail
+#import send_mail
 
-from clive.core.conf import Configure
-from clive.db.handler import ExpHandler, PersonHandler
-from scheduler import ScheduleManager
-
-exp_handler = ExpHandler()
-person_handler = PersonHandler()
-schedule_manager = ScheduleManager()
-
-cfg = Configure()
-SCANNER_IDS = map(int,cfg[('scan','scanner_ids')].split(","))
+from database import Database
+from schema import Batch
 
 
-def make_reservation(values):
+def make_reservation(values, sid2ary, batchs):
     # decode input
+    person_id, project, dt_start, plate_ids, medium, h_scan, conditions\
+        = decode_order(values)
     try:
         person_id, project, dt_start, plate_ids, medium, h_scan, conditions\
             = decode_order(values)
@@ -32,16 +26,47 @@ def make_reservation(values):
 
     # reserve scanner
     n_plates = len(plate_ids)
-    scanposs = schedule_manager.reserve(
-        SCANNER_IDS, dt_start, h_scan, n_plates)
+    #scanposs = schedule_manager.reserve(
+    scanposs = reserve(
+        sid2ary, batchs, dt_start, h_scan, n_plates)
     if len(scanposs) == 0:
         return error_msg(['No space.'])
+
    
     # record experiment info
-    exps = []
+    db = Database()
+    batchid = int(db.get_maxid("batch")) + 1
+    itemvalues = [
+                ("id", batchid),
+                ("project", project),
+                ("person_id", person_id),
+                ("num_plates", n_plates),
+                ("dt_start", dt_start),
+                ("h_scan", h_scan)]
+    db.insert("batch", itemvalues)
+
+    tmp = []
     for plate_id, condition, scanpos in zip(plate_ids, conditions, scanposs):
-        exp = exp_handler.create(person_id, project, plate_id, medium, dt_start, condition, h_scan, scanpos)
-        exps += [exp]
+        expid = int(db.get_maxid("exp")) + 1
+        itemvalues = [
+                ("id", expid),
+                ("batch_id", batchid),
+                ("person_id", person_id),
+                ("project", project),
+                ("plate_id", plate_id),
+                ("medium", medium),
+                ("dt_start", dt_start),
+                ("conditions", condition),
+                ("h_scan", h_scan),
+                ("pos_scan", scanpos)]
+        db.insert("exp", itemvalues)
+        tmp += [(scanpos, expid)]
+
+    pos2exp_id = "|".join(["%s:%s" % (i[0],i[1]) for i in tmp])
+    batch = Batch(batchid)
+    batch.pos2exp_id = pos2exp_id
+    batch.update()
+    return "<h2>Success!!</h2>\n"
 
     # make csv table, then report 
     dt_now = datetime.datetime.now()
@@ -87,6 +112,7 @@ def decode_order(values):
     dt_h = datetime.timedelta(hours=1)
     if dt_plan < datetime.datetime.now()-dt_h:
         quit_with_msgs(["Datetime shold be in the future"])
+        quit_with_msgs(["Datetime shold be in the future"])
     plate_ids = [int(i) for i in values[3].split(",") if i != ""]
     medium = values[4]
     h_scan = int(values[5])
@@ -117,6 +143,68 @@ def report_by_email(person_id, fname):
     body += "Here is your registration information (attaced excel file).\n"
     body += "Please keep this file. You need Exp ID for further analysis.\n"
     send_mail.send_mail('Colony-live', email,'Registration information',body,fname)
+
+
+def get_total_hour(td): 
+    return (td.seconds + td.days * 24 * 3600)/3600
+
+
+def calc_inds(dt_sf):
+    dt_start, dt_finish = dt_sf
+    dt_now = datetime.datetime.now()
+    dt_today = datetime.datetime(
+        dt_now.year, dt_now.month, dt_now.day)
+    sind = get_total_hour(dt_start - dt_today) 
+    find = get_total_hour(dt_finish - dt_today)
+    if sind < 0: sind = 0
+    if find < 0: find = 0
+    return sind, find
+
+
+def calc_dt_sf(dt_start, h_scan):
+    dt_hours = datetime.timedelta(hours=h_scan)
+    dt_finish = dt_start + dt_hours
+    dt_sf = (dt_start, dt_finish)
+    return dt_sf
+
+def get_available_poss(dt_sf, sid, ary):
+    sind, find = calc_inds(dt_sf)
+    res = [1 for i in ary[sind:find] if i > 0]
+    if sum(res) > 0:
+        return []
+    scanposs = []
+    for pos in [1,2,3,4]:
+        scanpos = "%d-%d" % (sid, pos)
+        scanposs += [scanpos]
+    return scanposs
+
+
+def reserve(sid2ary, batchs, dt_start, h_scan, n_plates):
+    dt_sf = calc_dt_sf(dt_start, h_scan)
+    scanposs = []
+    tmp = []
+    for sid in sid2ary.keys():
+        ary = sid2ary[sid]
+        tmp += get_available_poss(dt_sf, sid, ary)
+        if n_plates <= len(tmp):
+            scanposs = tmp[:n_plates]
+            break
+    return scanposs
+
+
+def make_sid2ary(batchs, SCANNER_IDS, day_schedule):
+    sid2ary = {}   
+    for sid in SCANNER_IDS:
+        sid2ary[sid] = np.zeros(24*day_schedule)
+    
+    for batch in batchs:
+        dt_sf = calc_dt_sf(batch.dt_start, batch.h_scan)
+        sind, find = calc_inds(dt_sf)
+        sids = map(int, [i.split(":")[0].split("-")[0] for i in batch.pos2exp_id.split("|")])
+        sids = sorted(list(set(sids)))
+        for sid in sids:
+            sid2ary[sid][sind:find] = batch.id
+    return sid2ary
 
 
 if __name__ == "__main__":

@@ -1,17 +1,30 @@
+#!/usr/bin/env python2
+# -*- coding:utf-8 -*-
+
+
 """
 Configuration manager
 
 """
 
+import os
 from os.path import expanduser
 import ConfigParser
 
-home = expanduser("~")
-fpath = home + '/clive.cfg'
+path = os.path.dirname(os.path.abspath(__file__))
+fpath = path + '/../../colonylive.cfg'
+#home = expanduser("~")
+#fpath = home + '/colonylive/colonylive.cfg'
+
 cfg = ConfigParser.SafeConfigParser()
 
 
 class Configure():
+    """
+    colonyliveの設定を読み込む
+
+    """
+
     def __init__(self):
         self.load()
 
@@ -60,34 +73,27 @@ class Configure():
         sets = [
         (('admin','name'),'admin'),
         (('admin','email'),'admin@host.com'),
-
         (('db','host'),'localhost'),
         (('db','db'),'clive1'),
         (('db','user'),'clive'),
         (('db','pass'),'colonylive'),
         (('db','port'),'3306'),
-
         (('folder','img_tmp'),'%s/img_tmp/' % home),
         (('folder','img_scan'),'%s/img_scan/' % home),
         (('folder','img_store'),'%s/img/' % home),
-
         (('scan','scanner_ids'),''),
         (('scan','min_cycle'),'30'),
         (('scan','days_scan_keep'),'30'),
-        
         (('colony','r_center_mass'),'8'),
-
         (('growth','od_limit'),'1'),
         (('growth','point_number_use'),'100'),
         (('growth','frac_limit_ip'),'0.8'),
         (('growth','min_fixed_time_point'),'1200'),
-
         (('vuescan','pos_input_tab'),''),
         (('vuescan','pos_source'),''),
         (('vuescan','pos_mode'),''),
         (('vuescan','pos_abort'),''),
         (('vuescan','sec_scan_wait'),'240'),
-        
         (('setup','step'),'0')
         ]
         

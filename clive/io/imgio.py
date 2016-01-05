@@ -66,7 +66,6 @@ class ScanImgIO():
 
 if __name__ == "__main__":
     exp_id = 1
-
     exp = ExpManager(exp_id)
     
     img_ids = [i.id for i in exp.imgs]

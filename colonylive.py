@@ -1,4 +1,14 @@
 #!/usr/bin/env python2
+# -*- coding:utf-8 -*-
+
+
+"""
+colonylive
+
+アプリの起動
+
+
+"""
 
 from subprocess import call
 from multiprocessing import Process

@@ -1,7 +1,13 @@
-"""
-Periodic scanning
+#!/usr/bin/env python2
+# -*- coding:utf-8 -*-
 
 """
+cycle_scan.py
+
+設定された時間間隔でスキャンをくりかえす。
+スキャンオーダーはDatabaseに記述する
+"""
+
 
 TEST_MODE = 0
 
@@ -9,12 +15,6 @@ import os
 import time
 import datetime
 
-from clive.core.version import get_version
-from clive.core.conf import Configure
-from clive.io.imgio import ExpTmpImgIO, ScanImgIO
-
-from clive.db.handler import ScannerHandler, ImgscanHandler, ImgHandler
-from clive.db.manager import ExpManager
 from gui_scan import gui_scan
 from prep import prep_gui
 from imgcrip import clip_scanimg
