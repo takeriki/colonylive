@@ -7,13 +7,9 @@ import commands
 import os
 import time
 
-from clive.core.conf import Configure
-from clive.scan.prep import prep_gui
-cfg = Configure()
 
 def gui_setup():
     print "start to GUI position setting for VueScan."
-    prep_gui()
     
     # window setting
     os.system("wmctrl -a terminal")
@@ -21,21 +17,20 @@ def gui_setup():
     os.system("wmctrl -r terminal -e 1,400,100,600,500")
 
     msg = "move pointer to 'Input' tab, then hit enter"
-    cfg[('vuescan','pos_input_tab')] = _get_mouse_pos(msg)
+    inputtab = _get_mouse_pos(msg)
     
     msg = "move pointer to 'Source' list, then hit enter"
-    cfg[('vuescan','pos_source')] = _get_mouse_pos(msg)
+    source = _get_mouse_pos(msg)
 
     msg = "move pointer to 'Mode' list, then hit enter"
-    cfg[('vuescan','pos_mode')] = _get_mouse_pos(msg)
+    mode = _get_mouse_pos(msg)
     
     start_scan()
     msg = "move pointer to 'Abort' button, then hit enter"
-    cfg[('vuescan','pos_abort')] = _get_mouse_pos(msg)
-    stop_scan()
-    
-    cfg.update()
+    abort = _get_mouse_pos(msg)
+    stop_scan(abort)
     print "Complete!"
+    return [inputtab, source, mode, abort]
 
 
 def start_scan():
@@ -48,11 +43,11 @@ def start_scan():
     os.system("wmctrl -a terminal")
 
 
-def stop_scan():
+def stop_scan(abort):
     time.sleep(1)
     os.system("wmctrl -a VueScan")
     time.sleep(1)
-    os.system("xte 'mousemove %s'" % cfg[('vuescan','pos_abort')])
+    os.system("xte 'mousemove %s'" % abort)
     os.system("xte 'mouseclick 1'")
     time.sleep(1)
     os.system("wmctrl -a terminal")

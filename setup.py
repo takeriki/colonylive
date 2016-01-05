@@ -1,34 +1,23 @@
+"""
+setup for GUI automation of VueScan
 
-from setuptools import setup, find_packages
-setup(
-    name='colonylive',
-    version='1.0',
-    #packages = find_packages(),
-    packages = find_packages(),
-    #install_requires=['numpy','scipy','rpy2','web.py'],
-    package_data = {'clive':["web/templates/*", "web/static/styles/*"]},
-    
-    include_package_data = True,
+"""
 
-    scripts=[
-            'clive/scripts/colonylive',
-            'clive/scripts/colonylive-setup',
-            'clive/scripts/clive_scan',
-            'clive/scripts/clive_web',
-            'clive/scripts/clive_analysis',
-            ],
+import commands
+import os
+import time
 
-    extras_require = {
-        'R': ["rpy2>=2.2.2"]
-    },
+from clive.setup.auto_vuescan import gui_setup
+from clive.core.conf import Configure
+from clive.scan.prep import prep_gui
+cfg = Configure()
 
-    author = "Rikiya Takeuchi",
-    author_email = "takeriki0502@gmail.com",
-    description = "package for measurement and analysis of colony growth kinetics",
-    license = "GNU GPLv3",
-    keywords = "colony growth kintetics",
-    homepage = "http://ecoli.naist.jp/colonylive/",
+#prep_gui()
+inputtab, source, mode, abort = gui_setup()
 
-    platforms = "Python >= 2.7 on GNU/Linux"
-    )
+cfg[('vuescan','coordinate_inputtab')] = inputtab
+cfg[('vuescan','coordinate_source')] = source
+cfg[('vuescan','coordinate_mode')] = mode
+cfg[('vuescan','coordinate_abort')] = abort
+cfg.update()
 
