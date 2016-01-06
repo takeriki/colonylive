@@ -12,7 +12,7 @@ from clive.core.conf import Configure
 from clive.scan.prep import prep_gui
 cfg = Configure()
 
-#prep_gui()
+prep_gui()
 inputtab, source, mode, abort = gui_setup()
 
 cfg[('vuescan','coordinate_inputtab')] = inputtab

@@ -31,13 +31,13 @@ FOLDER_IMG_STORE = cfg[('folder','img_store')]
 
 
 def main():
-    #prep_gui()
+    prep_gui()
 
     if TEST_MODE:
         while True:
             print '[test-mode]'
-            time.sleep(100)
-            #time.sleep(10)
+            #time.sleep(100)
+            time.sleep(5)
             run()
     while True:
         dt_now = datetime.datetime.now()
