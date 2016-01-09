@@ -19,7 +19,6 @@ def get_html_scanstatus(scanners):
                 name,
                 dt_finish.strftime('%m/%d %H:%M')
                 )
-
         res = "<span style='color:%s'>%s</span>" % (color, status)
         html += "<tr><td>Scanner %s</td><td>%s</td></tr>\n" % (scanner.id, res)
     html += '</table>\n'
@@ -29,10 +28,12 @@ def get_html_scanstatus(scanners):
 def get_html_button(person_id, batchs):
     html = "<FORM action=/monitor method=POST>\n"
     html += "<table class='sample'>\n"
-        
+    
     for batch in batchs:
         action = "start"
-        if batch.in_process == 1:
+        print batch.id
+        print batch.status
+        if batch.status == "monitoring":
             action = "abort"
         html += "<tr><td>"
         html += "Batch %s -- " % batch.id
@@ -48,6 +49,7 @@ def get_html_button(person_id, batchs):
     html += "</table>\n"
     html += "</form>\n"
     return html
+
 
 def calc_dt_finish(dt_start, h_scan):
     dt_hours = datetime.timedelta(hours=h_scan)

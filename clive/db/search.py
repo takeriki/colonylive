@@ -26,7 +26,7 @@ def find_person(user, passwd):
 def get_booked_batchs(person_id):
     table = "batch"
     select = "id"
-    where = "step=0 AND person_id=%s" % person_id
+    where = "status=('waiting the experiment' OR 'monitoring') AND person_id=%s" % person_id
     db = Database()
     res = db.fetchall(table, select, where)
     if res == None:

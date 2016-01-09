@@ -46,7 +46,7 @@ def start_batch(batch):
         scanner.update()
 
     batch.dt_start = dt_start
-    batch.in_process = 1
+    batch.status = "monitoring"
     batch.update()
 
 
@@ -56,7 +56,7 @@ def abort_batch(batch):
     for sid in sids:
         scanner = Scanner(sid)
         scanner.clean()
-    batch.in_process = 0
+    batch.status = "waiting the experiment"
     batch.update()
 
 

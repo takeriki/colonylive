@@ -26,7 +26,7 @@ os.chdir(path)
 #from clive.core.version import get_version
 from clive.core.conf import Configure
 from clive.io.tmp import DIR_TMP
-from clive.db.schema import Scanner, Person
+from clive.db.schema import Scanner, Person, Batch
 
 
 cfg = Configure()
@@ -43,7 +43,6 @@ urls = (
     '/monitor', 'monitor',
     '/user_reg', 'Userreg',
     '/exp_reg', 'Expreg',
-    '/exp_reg_dko', 'Expregdko',
     '/reg_manage', 'Regmanage',
     '/download','Download'
 )
@@ -145,6 +144,7 @@ class Userreg:
 
 
 from clive.db.register import make_reservation
+from clive.web.decode import decode_text
 class Expreg:
     """
     実験を登録する
@@ -161,82 +161,39 @@ class Expreg:
     def POST(self):
         # inputの整形
         inputs = web.input()
-        conditions_key = "|".join(
-            [inputs.key1, inputs.key2, inputs.key3])
-        conditions_value = "|".join(
-            [inputs.values1, inputs.values2, inputs.values3])
-        dt_start = "%s-%s-%s-%s" % (
-            inputs.year,
-            inputs.month,
-            inputs.day,
-            inputs.hour
-            )
-        values = [
-            str(session.person_id),
-            inputs.project,
-            dt_start,
-            inputs.plate_ids,
-            inputs.medium,
-            inputs.h_scan,
-            conditions_key,
-            conditions_value]
+        tmp = "%s-%s-%s-%s" % (inputs.year,inputs.month,inputs.day,inputs.hour)
+        dt_start = datetime.datetime.strptime(tmp, '%Y-%m-%d-%H')
+        dt_offset = datetime.timedelta(hours=1)
+        error = 0
+        if dt_start < datetime.datetime.now()-dt_offset:
+            error = "Wrong datetime (must be in future)"
+        try:
+            pairs = decode_text(inputs.text_setting)
+        except:
+            error = "Wrong input: Conditions&Plates"
 
+        if error != 0:
+            year, month, day, hour = self._get_dt()
+            return render.exp_reg('exp_reg', error, year, month, day, hour)
+    
         # 登録
-        batchs = get_booked_batchs(session.person_id)
-        sid2ary = make_sid2ary(batchs, SCANNER_IDS, DAYS_SCHEDULE)
-        result = make_reservation(values, sid2ary, batchs)
-
-        year, month, day, hour = self._get_dt()
-        return render.exp_reg('exp_reg', result, year, month, day, hour)
+        batch = Batch()
+        batch.set_maxid()
+        batch.project = inputs.project
+        batch.person_id = session.person_id
+        batch.num_plates = len(pairs)
+        batch.medium = inputs.medium
+        batch.dt_start = dt_start
+        batch.h_scan = inputs.h_scan
+        batch.status = "waiting the experiment"
         
-    def _get_dt(self): 
-        now = datetime.datetime.now()
-        return now.year, now.month, now.day, now.hour
-
-
-class Expregdko:
-    """
-    実験を登録する
-
-    sid2aryは scanner ID毎のnumpy arrayである
-    スキャナーの使用状況を管理（mapping）するためのもの
-    """
-
-    def GET(self):
-        check_login()
-        year, month, day, hour = self._get_dt()
-        return render.exp_reg_dko('exp_reg_dko', '', year, month, day, hour)
-
-    def POST(self):
-        # inputの整形
-        inputs = web.input()
-        conditions_key = "|".join(
-            [inputs.key1, inputs.key2, inputs.key3])
-        conditions_value = "|".join(
-            [inputs.values1, inputs.values2, inputs.values3])
-        dt_start = "%s-%s-%s-%s" % (
-            inputs.year,
-            inputs.month,
-            inputs.day,
-            inputs.hour
-            )
-        values = [
-            str(session.person_id),
-            inputs.project,
-            dt_start,
-            inputs.plate_ids,
-            inputs.medium,
-            inputs.h_scan,
-            conditions_key,
-            conditions_value]
-
-        # 登録
         batchs = get_booked_batchs(session.person_id)
         sid2ary = make_sid2ary(batchs, SCANNER_IDS, DAYS_SCHEDULE)
-        result = make_reservation(values, sid2ary, batchs)
-
+        error = make_reservation(batch, sid2ary, pairs)
         year, month, day, hour = self._get_dt()
-        return render.exp_reg_dko('exp_reg_dko', '', result, year, month, day, hour)
+        if error == 0:
+            raise web.seeother('/reg_manage')
+        return render.exp_reg('exp_reg', error, year, month, day, hour)
         
     def _get_dt(self): 
         now = datetime.datetime.now()
@@ -338,23 +295,6 @@ class Download:
             exp_id = int(inputs['exp_id'])
         except:
             return render.download(self.title)
-
-        if inputs['item'] == "image":
-            data = make_images_tar(exp_id)
-            fname = "%d.zip" % exp_id
-            web.header("Content-Disposition", "attachment; filename=%s" % fname)
-            web.header("Content-Length", len(data))
-            web.header("Content-Type", "application/octet-stream")
-            return data
-    
-        if inputs['item'] == "growth":
-            data = make_growth_csv(exp_id)
-            fname = "%d.csv" % exp_id
-            web.header("Content-Disposition", "attachment; filename=%s" % fname)
-            web.header("Content-Length", len(data))
-            web.header("Content-Type", "text/csv")
-            return data
-            
 
 if __name__ == "__main__":
     app.run() 

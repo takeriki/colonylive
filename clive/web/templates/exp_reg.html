@@ -4,12 +4,13 @@ $:render.header(title)
 
 <h3>Experiment registration</h3>
 
+<span style='color:#FF0000'>
+<h2>
 $:msg
+</h2>
+</span>
 
 <FORM action=/exp_reg method=POST>
------------------------------------------------------<br>
-Singule value<br>
------------------------------------------------------<br>
 
     <table id="login" cellspacing=8>
         <tr>
@@ -37,46 +38,33 @@ Singule value<br>
             <td>Culture medium: </td>
             <td><input type=text name='medium' value=LB size=20></td>
         </tr>
-    </table>
 
------------------------------------------------------<br>
-Multiple values; <b>comma separation</b><br>
------------------------------------------------------<br>
-    <table id="login" cellspacing=8>
-        <tr>
-	    <td></td>
-	    <td></td>
-	    <td></td>
-	    <td>e.g. 1,2,3,1,2,3</td>
-        </tr>
-        <tr>
-            <td colspan="2">
-		Plate (require): 
-	    </td>
-	    <td>PlateIDs</td>
-            <td>
-		<input type=text name='plate_ids' size=100>
-	    </td>
 
-        </tr>
 	<tr>
-	    <td rowspan="3">
-		Condition: <br>
-	        (option)
-	    </td>
-            <td>Key1 <input type=text name='key1', size=10></td>
-            <td>Values</td>
-	    <td><input type=text name='values1' size=100></td>
+            <td>Condition&Plates:</td>
+            <td><textarea name="text_setting" cols="80" rows="14" ></textarea></td>
+            <td><pre>
+書き方) 条件名1=値1|条件名2=値2...:plate ids（カンマ区切り）
+
+例)DKOの場合:
+Hfr=folD:4,5,6
+Hfr=dnaK:4,5,6,4,5,6
+...
+
+例)DKOで接合時間を変えた場合
+Hfr=folD|mating=20h:4,5,6
+...
+
+Plate ID: 1,2,3: Keio rearray release1 1536 format 
+	  4,5,6: Keio rearray release2 1536 format 
+	    </pre></td>
         </tr>
+	
+
         <tr>
-            <td>Key2 <input type=text name='key2', size=10></td>
-            <td>Values</td>
-            <td><input type=text name='values2' size=100></td>
-        </tr>
-        <tr>
-            <td>Key3 <input type=text name='key3', size=10></td>
-            <td>Values</td>
-            <td><input type=text name='values3' size=100></td>
+	    <td>note:</td>
+            <td><textarea name="note" cols="80" rows="10" ></textarea></td>
+            <td>自由に書きこんでよい</td>
         </tr>
     </table>
     <br>

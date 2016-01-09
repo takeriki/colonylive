@@ -6,7 +6,7 @@ Database schema (Table構成)の定義
 
 """
 
-from database import Database, Table
+from database import Table
 
 class Exp(Table):
     tablename = "exp" 
@@ -46,8 +46,7 @@ class Batch(Table):
              "pos2exp_id",
              "dt_start",
              "h_scan",
-             "step",
-             "in_process"]
+             "status"]
 
             
 class Imgscan(Table):
@@ -59,14 +58,6 @@ class Imgscan(Table):
              "min_grow"]
 
 
-class Img(Table):
-    tablename = "img" 
-    items = ["id"
-             "exp_id",
-             "img_scan_id",
-             "min_grow"]
-
-            
 class Scanner(Table):
     tablename = "scanner"
     items = ["id",
