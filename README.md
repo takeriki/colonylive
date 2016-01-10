@@ -18,6 +18,12 @@ Requirement
 xautomation
 wmctrl
 vuescan
+zip
+python-rpy2
+python-numpy
+python-matplotlib
+...
+todo 追加
 
 
 License

@@ -19,7 +19,7 @@ from clive.scan.imgcrip import clip_scanimg
 from clive.core.conf import Configure
 
 
-TEST_MODE = 1
+TEST_MODE = 0
 
 
 cfg = Configure()
@@ -37,8 +37,7 @@ def main():
     if TEST_MODE:
         while True:
             print '[test-mode]'
-            #time.sleep(100)
-            time.sleep(5)
+            time.sleep(60)
             run()
     while True:
         dt_now = datetime.datetime.now()
