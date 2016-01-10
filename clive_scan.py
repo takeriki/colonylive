@@ -81,6 +81,7 @@ def run():
                 exp.in_process = 0
                 exp.step_done = 1
                 exp.update()
+                comress(expid)
             scanner.clean()
             continue
         
@@ -98,12 +99,13 @@ def run():
             continue
         print "[Success]"
         
-        if scanner.min_grows == "":
+        if scanner.min_grows is None:
             min_grows = [imgscan.min_grow]
         else:
             min_grows = scanner.min_grows.split("|")
             min_grows += [imgscan.min_grow]
         scanner.min_grows = "|".join(map(str,min_grows))
+        scanner.update()
         n_scan = len(min_grows) - 1
 
         path_outs = [get_path(i, n_scan) for i in expids]
@@ -121,10 +123,9 @@ def get_path(expid, n_scan):
     return path
 
 
-def get_path(expid, n_scan):
+def comress(expid):
     fld = "%s%d" % (FOLDER_IMG, expid)
-    os.system("zip -q -m -r ")
-    return path
+    os.system("zip -q -m -r %s" % fld)
 
 
 def make_new_imgscan(scanner):
