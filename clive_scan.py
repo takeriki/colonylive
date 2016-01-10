@@ -99,7 +99,7 @@ def run():
             continue
         print "[Success]"
         
-        if scanner.min_grows is None:
+        if scanner.min_grows == "":
             min_grows = [imgscan.min_grow]
         else:
             min_grows = scanner.min_grows.split("|")
@@ -125,7 +125,9 @@ def get_path(expid, n_scan):
 
 def comress(expid):
     fld = "%s%d" % (FOLDER_IMG, expid)
-    os.system("zip -q -m -r %s" % fld)
+    cmd = "zip -q -m -r %s" % fld
+    print cmd
+    os.system(cmd)
 
 
 def make_new_imgscan(scanner):
