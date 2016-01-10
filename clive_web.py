@@ -11,7 +11,7 @@ http://ipaddress:8080/でアクセスする
 """
 
 __version__ = "0.0.1"
-__date__ = "03 January 2016"
+__date__ = "10 January 2016"
 
 
 import os
