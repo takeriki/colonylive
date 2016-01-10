@@ -20,6 +20,7 @@ class Exp(Table):
              "h_scan",
              "dt_start",
              "pos_scan",
+             "mins_grow",
              "step_done",
              "n_death",
              "pcc",
