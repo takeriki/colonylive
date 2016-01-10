@@ -77,6 +77,7 @@ def run():
             print "Complete!!"
             for expid in expids:
                 exp = Exp(expid)
+                exp.mins_grow = scanner.min_grows
                 exp.in_process = 0
                 exp.step_done = 1
                 exp.update()
@@ -96,11 +97,14 @@ def run():
             print "[Faild]"
             continue
         print "[Success]"
-
-        min_grows = scanner.min_grows.split("|")
-        min_grows += [imgscan.min_grow]
+        
+        if scanner.min_grows == "":
+            min_grows = [imgscan.min_grow]
+        else:
+            min_grows = scanner.min_grows.split("|")
+            min_grows += [imgscan.min_grow]
         scanner.min_grows = "|".join(map(str,min_grows))
-        n_scan = len(min_grows)
+        n_scan = len(min_grows) - 1
 
         path_outs = [get_path(i, n_scan) for i in expids]
         clip_scanimg(path_scanimg, path_outs, cfg)
@@ -114,6 +118,12 @@ def get_path(expid, n_scan):
     if not os.path.isdir(fld):
         os.system("mkdir -p %s" % fld)
     path = "%s/%d-%04d.tif" % (fld, expid, n_scan)
+    return path
+
+
+def get_path(expid, n_scan):
+    fld = "%s%d" % (FOLDER_IMG, expid)
+    os.system("zip -q -m -r ")
     return path
 
 
