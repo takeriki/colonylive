@@ -11,7 +11,7 @@ from prep import back_to_terminal
 
 
 def gui_scan(scanner, fname, cfg):
-    fname = fname.replace(".tif","")
+    #fname = fname.replace(".tif","")
     inputtab = cfg[('vuescan','coordinate_inputtab')]
     source = cfg[('vuescan','coordinate_source')]
     mode = cfg[('vuescan','coordinate_mode')]
