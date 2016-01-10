@@ -125,7 +125,7 @@ def get_path(expid, n_scan):
 
 def comress(expid):
     fld = "%s%d" % (FOLDER_IMG, expid)
-    cmd = "zip -q -m -r %s.zip %s" % fld
+    cmd = "zip -q -m -r %s.zip %s" % (fld, fld)
     print cmd
     os.system(cmd)
 
