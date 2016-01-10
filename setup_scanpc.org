@@ -1,0 +1,72 @@
+#+TITLE:ScanPC setup
+#+AUTHOR:Rikiya Takeuchi
+#+DATE:16/01/04-01/10
+#+OPTIONS: \n:t
+
+* Debianのインストール
+** BIOSの設定
+安全ブートを無効
+regacyブートを有効
+
+** Debian Live install imageが入ったUSBメモリを用意
+amd64 (64bit), gnomeを選択する。
+2016.01.10現在のdownload URLは下記のとおり。
+http://cdimage.debian.org/debian-cd/current-live/amd64/iso-hybrid/debian-live-8.2.0-amd64-gnome-desktop.iso
+
+ダウンロードしたisoファイルをUSBメモリに書き込む
+Windowsの場合) Linux live usb creatorを使用する
+http://www.linuxliveusb.com/
+
+Linuxの場合) Terminalでコマンドを打つ
+sudo dd if=debian-live-8.2.0-amd64-gnome-desktop.iso of=/dev/sd[x]
+sudo sync
+sd[x]のxはUSBメモリ(lsusbで調べる)
+
+** USBメモリのDebian installerを起動する
+USBを挿してからPCの電源を入れる
+F9を押してUSBメモリを選択してENTER
+
+** installを進める
+partitionは全領域を/とした
+
+ユーザー関係
+rootのpassword: treex3lab
+username: morilab
+password: treex3lab
+
+usernameは絶対にmorilabにすること
+
+installが終了すると再起動する。
+debianが立ち上がることを確認。
+
+* Debianのセットアップ
+** genome classicでAuto loginするように設定
+Login画面で genome classicを選択
+（defaultのGnome UIは使用しにくいため）
+
+User設定でAuto loginにチェックをいれる
+
+** sudoコマンドをmorilabで使用可能にする
+su
+gpasswd -a morilab sudo
+visudo
+以下を確認する。
+%sudo   ALL=(ALL:ALL) ALL
+
+** colonyliveをgithubからダウンロードする
+cd ~
+git clone https://github.com/takeriki/colonylive.git
+
+なお、これ以降、colonyliveのupdateは以下のようにおこなう
+cd ~/colonylive
+git pull
+
+変更が加えられている場合は
+cd ~/colonylive
+git stash
+git pull
+
+** 環境の設定
+./setup_clive_scan.sh
+
+root権限の処理が含まれているため、sudoのパスワードを入力する必要あり
