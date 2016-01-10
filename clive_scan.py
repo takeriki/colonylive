@@ -15,6 +15,7 @@ import datetime
 from clive.db.schema import Scanner, Imgscan, Exp
 from clive.scan.gui_scan import gui_scan
 from clive.scan.prep import prep_gui
+from clive.scan.imgcrip import clip_scanimg
 from clive.core.conf import Configure
 
 
@@ -26,8 +27,8 @@ MIN_CYCLE = int(cfg[('scan','min_cycle')])
 SCANNER_IDS = map(int,cfg[('scan','scanner_ids')].split(","))
 VERSION = cfg[('core','version')]
 FOLDER_SCAN = cfg[('folder','img_scan')]
-FOLDER_TMP = cfg[('folder','img_tmp')]
-FOLDER_IMG_STORE = cfg[('folder','img_store')]
+#FOLDER_TMP = cfg[('folder','img_tmp')]
+FOLDER_IMG = cfg[('folder','img_store')]
 
 
 def main():
@@ -91,15 +92,29 @@ def run():
         print "until %s " % scanner.dt_finish.strftime('%a, %d %b %Y'),
         ind = SCANNER_IDS.index(scanner.id) + 1
         fail = gui_scan(ind, path_scanimg, cfg) 
-        #fail = 0
         if fail:
             print "[Faild]"
             continue
         print "[Success]"
-        continue
+
+        min_grows = scanner.min_grows.split("|")
+        min_grows += [imgscan.min_grow]
+        scanner.min_grows = "|".join(map(str,min_grows))
+        n_scan = len(min_grows)
+
+        path_outs = [get_path(i, n_scan) for i in expids]
+        clip_scanimg(path_scanimg, path_outs, cfg)
     
     print
     print "DONE"
+
+
+def get_path(expid, n_scan):
+    fld = "%s%d" % (FOLDER_IMG, expid)
+    if not os.path.isdir(fld):
+        os.system("mkdir -p %s" % fld)
+    path = "%s/%d-%04d.tif" % (fld, expid, n_scan)
+    return path
 
 
 def make_new_imgscan(scanner):

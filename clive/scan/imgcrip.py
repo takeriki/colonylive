@@ -9,9 +9,6 @@ import sys
 import math
 import cv2
 
-from clive.core.conf import Configure
-cfg = Configure()
-
 
 def clip_scanimg(fpath_in, fpath_outs, cfg):
     ary = cv2.imread(fpath_in)
