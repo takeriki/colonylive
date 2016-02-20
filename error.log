@@ -1,6 +1,0 @@
-timeout, scanner=1, out="/home/riki/img_scan/"19
-timeout, scanner=2, out="/home/riki/img_scan/"20
-timeout, scanner=1, out="/home/riki/img_scan/"21
-timeout, scanner=1, out="/home/riki/img_scan/"25
-timeout, scanner=1, out="/home/riki/img_scan/"1
-timeout, scanner=2, out=/home/morilab/img_scan/11
