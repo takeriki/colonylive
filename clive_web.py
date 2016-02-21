@@ -25,8 +25,12 @@ os.chdir(path)
 #web.config.debug = False
 #from clive.core.version import get_version
 from clive.core.conf import Configure
-from clive.io.tmp import DIR_TMP
 from clive.db.schema import Scanner, Person, Batch
+
+DIR_TMP = "/tmp/colonylive/"
+if not os.path.exists(DIR_TMP):
+    cmd = "mkdir -p %s" % DIR_TMP
+    os.system(cmd)
 
 
 cfg = Configure()
@@ -143,6 +147,7 @@ class Userreg:
 
 
 
+from clive.db.search import get_all_booked_batchs
 from clive.db.register import make_reservation
 from clive.web.decode import decode_text
 class Expreg:
@@ -187,7 +192,7 @@ class Expreg:
         batch.h_scan = inputs.h_scan
         batch.status = "waiting the experiment"
         
-        batchs = get_booked_batchs(session.person_id)
+        batchs = get_all_booked_batchs()
         sid2ary = make_sid2ary(batchs, SCANNER_IDS, DAYS_SCHEDULE)
         error = make_reservation(batch, sid2ary, pairs)
         year, month, day, hour = self._get_dt()
@@ -216,24 +221,26 @@ class Regmanage:
 
     def GET(self):
         check_login()
-        batchs = get_booked_batchs(session.person_id)
+        batchs = get_all_booked_batchs()
         return render.reg_manage(self.title, 
             self.get_html_booktable(batchs),
             self.get_html_calender(batchs))
 
     def POST(self):
         inputs = web.input()
-        batchs = get_booked_batchs(session.person_id)
+        batchs = get_all_booked_batchs()
         batch = [i for i in batchs if i.id == int(inputs.batchid_rm)][0]
         cancel_batch(batch)
         # cancelした情報を反映するために再度登録batchを読みこむ
-        batchs = get_booked_batchs(session.person_id)
+        batchs = get_all_booked_batchs()
         return render.reg_manage(self.title, 
             self.get_html_booktable(batchs), 
             self.get_html_calender(batchs))
 
     def get_html_booktable(self, batchs):
-        return get_html_booktable(batchs, Person(session.person_id))
+        for batch in batchs:
+            batch.person_name = Person(batch.person_id).name
+        return get_html_booktable(batchs)
         
     def get_html_calender(self, batchs):
         sid2ary = make_sid2ary(batchs, SCANNER_IDS, DAYS_SCHEDULE)
@@ -241,8 +248,8 @@ class Regmanage:
     
 
 
-from clive.db.search import get_booked_batchs
-from clive.db.control import start_batch, abort_batch
+from clive.db.search import get_my_booked_batchs
+from clive.db.control import start_batch, cancel_batch, abort_batch
 from clive.web.htmlmaker import get_html_scanstatus, get_html_button
 class monitor:
     """
@@ -262,11 +269,14 @@ class monitor:
         ref_code = inputs.keys()[0]
         btype, ind = ref_code.split("-")
         
-        batchs = get_booked_batchs(session.person_id)
-        if btype == "start":
+        batchs = get_my_booked_batchs(session.person_id)
+        if btype == "Start":
             batch = [i for i in batchs if i.id == int(ind)][0]
             start_batch(batch)
-        if btype == "abort":
+        if btype == "Cancel":  # cancelは停止させるが終了しない（条件が残る）
+            batch = [i for i in batchs if i.id == int(ind)][0]
+            cancel_batch(batch)
+        if btype == "Abort":   # abortは停止させて終了する。
             batch = [i for i in batchs if i.id == int(ind)][0]
             abort_batch(batch)
         return render.monitor(self.title,
@@ -277,7 +287,7 @@ class monitor:
         return get_html_scanstatus(scanners)
     
     def get_button(self):
-        batchs = get_booked_batchs(session.person_id)
+        batchs = get_my_booked_batchs(session.person_id)
         return get_html_button(session.person_id, batchs)
 
 

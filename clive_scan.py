@@ -12,7 +12,7 @@ import os
 import time
 import datetime
 
-from clive.db.schema import Scanner, Imgscan, Exp
+from clive.db.schema import Scanner, Imgscan, Exp, Batch
 from clive.scan.gui_scan import gui_scan
 from clive.scan.prep import prep_gui
 from clive.scan.imgcrip import clip_scanimg
@@ -74,6 +74,9 @@ def run():
         # ストップ判定と処理
         if scanner.dt_finish < dt_now:
             print "Complete!!"
+            batch = Batch(scanner.batch_id)
+            batch.status = "Done"
+            batch.update()
             for expid in expids:
                 exp = Exp(expid)
                 exp.mins_grow = scanner.min_grows

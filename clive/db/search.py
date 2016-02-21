@@ -9,11 +9,11 @@ Database operation modules
 
 
 from database import Database
-from schema import Person, Batch, Colony, Growth
+from schema import Exp, Person, Batch, Colony, Growth
 
 
 def find_person(user, passwd):
-    table = "person"
+    table = Person.tablename
     select = "id"
     where = "user='%s' AND passwd='%s'" % (user, passwd)
     db = Database()
@@ -23,10 +23,21 @@ def find_person(user, passwd):
     return Person(res[0])
 
 
-def get_booked_batchs(person_id):
-    table = "batch"
+def get_my_booked_batchs(person_id):
+    table = Batch.tablename
     select = "id"
-    where = "status=('waiting the experiment' OR 'monitoring') AND person_id=%s" % person_id
+    where = "(status='waiting the experiment' OR status='monitoring') AND person_id=%s" % person_id
+    db = Database()
+    res = db.fetchall(table, select, where)
+    if res == None:
+        return None
+    return [Batch(i[0]) for i in res]
+
+
+def get_all_booked_batchs():
+    table = Batch.tablename
+    select = "id"
+    where = "status='waiting the experiment' OR status='monitoring'"
     db = Database()
     res = db.fetchall(table, select, where)
     if res == None:
@@ -66,6 +77,17 @@ def get_growths_by_exp_id(exp_id):
             growth.__dict__[items[i]] = v
         growths += [growth]
     return growths
+
+
+def get_unprocessed_exp_ids():
+    table = Exp.tablename
+    select = "id"
+    where = "step_done<4 AND failure='' AND in_process=0"
+    db = Database()
+    res = db.fetchall(table, select, where)
+    if res == None:
+        return None
+    return [i for i in res]
 
 
 if __name__ == "__main__":

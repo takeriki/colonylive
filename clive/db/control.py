@@ -39,6 +39,7 @@ def start_batch(batch):
         #scanner_id, exp_ids = item.split("-")
         #scanner = Scanner(scanner_id)
         scanner = Scanner(sid)
+        scanner.batch_id = batch.id
         scanner.person_name = person.name
         scanner.dt_start = dt_start
         scanner.dt_finish = dt_finish
@@ -50,7 +51,7 @@ def start_batch(batch):
     batch.update()
 
 
-def abort_batch(batch):
+def cancel_batch(batch):
     sids = list(set([int(i.split(":")[0].split("-")[0])
                 for i in batch.pos2exp_id.split("|")]))
     for sid in sids:
@@ -60,13 +61,15 @@ def abort_batch(batch):
     batch.update()
 
 
-def cancel_batch(batch):
-    expids = [int(i.split(":")[1]) for i 
-                    in batch.pos2exp_id.split("|")]
-    for expid in expids:
-        exp = Exp(expid)
-        exp.remove()
-    batch.remove()
+def abort_batch(batch):
+    sids = list(set([int(i.split(":")[0].split("-")[0])
+                for i in batch.pos2exp_id.split("|")]))
+    for sid in sids:
+        scanner = Scanner(sid)
+        scanner.dt_finish = datetime.datetime.now() # 終了時刻を押した時刻にする
+        scanner.update()
+    batch.status = "Done"
+    batch.update()
     
 
 if __name__ == "__main__":

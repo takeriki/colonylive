@@ -30,11 +30,11 @@ def get_html_button(person_id, batchs):
     html += "<table class='sample'>\n"
     
     for batch in batchs:
-        action = "start"
+        action = "Start"
         print batch.id
         print batch.status
         if batch.status == "monitoring":
-            action = "abort"
+            action = "Cancel"
         html += "<tr><td>"
         html += "Batch %s -- " % batch.id
         html += "%s -- " % batch.project
@@ -45,7 +45,12 @@ def get_html_button(person_id, batchs):
         html += "until %s </td>\n" % dt_str
         html += "<td><input type='submit' "
         html += "name='%s-%s' " % (action, batch.id)
-        html += "value='%s'></td></tr>\n" % action
+        html += "value='%s'></td>\n" % action
+        if action == "Cancel":
+            html += "<td><input type='submit' "
+            html += "name='Abort-%s' " % (batch.id)
+            html += "value='Abort'></td>\n"
+        html += "</tr>\n"
     html += "</table>\n"
     html += "</form>\n"
     return html
@@ -57,7 +62,7 @@ def calc_dt_finish(dt_start, h_scan):
     return dt_finish
 
 
-def get_html_booktable(batchs, person):
+def get_html_booktable(batchs):
     if len(batchs) == 0:
         return ""
     html =  "<FORM action=/reg_manage method=POST>\n"
@@ -78,7 +83,7 @@ def get_html_booktable(batchs, person):
         dt_str += dt_finish.strftime("%m/%d %H") + "h"
         html += "<tr>\n"
         html += "<td>%d</td>\n" % batch.id
-        html += "<td>%s</td>\n" % person.name
+        html += "<td>%s</td>\n" % batch.person_name
         html += "<td>%s</td>\n" % batch.project 
         html += "<td>%s</td>\n" % dt_str
         html += "<td>%d plates</td>\n" % batch.num_plates

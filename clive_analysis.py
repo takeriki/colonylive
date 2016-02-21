@@ -17,7 +17,6 @@ from clive.db.schema import Exp, Colony, Growth, Ngrowth
 from clive.db.pack import mput_colonys, mput_growths
 from clive.db.search import get_colonys_by_exp_id, get_growths_by_exp_id
 from clive.core.conf import Configure
-#from clive.analysis.image.seqimg2colony import get_colonypack
 from clive.analysis.image.seqimg2colony import analyze_pos_seqimgs
 from clive.analysis.growth.colony2growth import get_growth_pars, get_ind
 from clive.analysis.growth.normalize import norm_growth
@@ -137,14 +136,14 @@ def execute(exp_id):
             growth_analysis(exp)
         if exp.step_done <= 3:
             growth_normalize(exp)
-        print "Succeed"
     except Exception as e:
-        #exp.failure = 1
-        #exp.update()
+        exp.failure = 'yes'
+        exp.update()
         print str(e)
     finally:
         exp.in_process = 0
         exp.update()
+        print "Succeed"
 
 
 if __name__ == "__main__":

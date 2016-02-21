@@ -2,42 +2,37 @@
 # -*- coding:utf-8 -*-
 
 """
-解析用プログラム
+CRON用 自動解析プログラム
 
-
-Routine analysis (automatic)
-
+10 Processで並列処理(multiprocessing module)
 """
 
-import time
-import datetime
 
-from clive.db.handler import ExpHandler
-from clive.analysis.process import execute
+#import multiprocessing as mp
 
-exp_handler = ExpHandler()
+N_PROC = 10
 
+from clive.db.search import get_unprocessed_exp_ids
 
-def perform():
-    while True:
-        exps = exp_handler.get_unprocess_exps()
-        print "Analysis targets:", exps
-        for exp in exps:
-            if exp.id != 1:
-                continue
-            execute(exp.id, exp.step_done)    
+exp_ids = get_unprocessed_exp_ids()
 
-        _wait_until_midnight()
-    
+print len(exp_ids)
 
-def _wait_until_midnight():
-    dt = datetime.datetime.now()
-    tsec_now = dt.hour * 3600 + dt.minute * 60 + dt.second
-    tsec_day = 24 * 3600
-    sec_wait = tsec_day - tsec_now
-    time.sleep(sec_wait)
+def perform(cmds):
+    for cmd in cmds:
+        print cmd
 
 
-if __name__ == "__main__":
-    perform()
+"""
+def perform(cmds):
+    for cmd in cmds:
+        print cmd
+        try:
+            cmd()
+        except:
+            pass
 
+
+#pool = mp.Pool(N_PROC)
+#pool.map(perform, cmds)
+"""

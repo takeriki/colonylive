@@ -62,6 +62,7 @@ class Imgscan(Table):
 class Scanner(Table):
     tablename = "scanner"
     items = ["id",
+             "batch_id",
              "person_name",
              "dt_start",
              "dt_finish",
