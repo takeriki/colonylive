@@ -2,7 +2,6 @@
 
 import os
 import sys
-import glob
 
 from part.image import Image
 from objmap import get_objectmap
@@ -10,11 +9,11 @@ from setgrid import detect_grid
 from colony import get_colony
 
 
-def get_colonypack(path, ncol, nrow):
+#def get_colonypack(path, ncol, nrow):
+def analyze_pos_seqimgs(path, ncol, nrow):
     cwd = os.getcwd()
     os.chdir(path)
     fnames = sorted(os.listdir('.'))
-    #fnames = fnames[0:101]
     
     fname = fnames[-1]
     sys.stdout.write("Pre-scanning...")
@@ -28,7 +27,13 @@ def get_colonypack(path, ncol, nrow):
     gpos2colony = get_colony(img_gray, ary_index_map, grid)
     
     n = len(fnames)
-    cp = ColonyPack(gpos2colony)
+    mlpos2data = {} # Multilayer
+    for pos, colony in gpos2colony.items():
+        mlpos2data[pos, 0] = _to_str(colony.location)
+        mlpos2data[pos, 1] = []
+        mlpos2data[pos, 2] = []
+        mlpos2data[pos, 3] = []
+    #cp = ColonyPack(gpos2colony)
     for i, fname in enumerate(fnames):
         sys.stdout.write("\r")
         sys.stdout.write("Image analysis\t[%-30s]" % ("="*int((i+1)*30/n)))
@@ -40,12 +45,23 @@ def get_colonypack(path, ncol, nrow):
             #gpos2colony[gpos].load_img(ary_img)
             colony = gpos2colony[gpos]
             colony.load_img(ary_img)
-            cp.add(gpos, colony)
+            mlpos2data[gpos,1] += [colony.area]
+            mlpos2data[gpos,2] += [colony.mass]
+            mlpos2data[gpos,3] += [colony.mass]
+            #cp.add(gpos, colony)
+    for gpos in sorted(grid.poss):
+        mlpos2data[gpos,1] = _to_str(mlpos2data[gpos,1])
+        mlpos2data[gpos,2] = _to_str(mlpos2data[gpos,2])
+        mlpos2data[gpos,3] = _to_str(mlpos2data[gpos,3])
     print  
-    cp.pack()
+    #cp.pack()
     os.chdir(cwd)
-    return cp
+    #return cp
+    return mlpos2data
 
+
+def _to_str(vs):
+    return "|".join(map(str, vs))
 
 class ColonyPack():
     

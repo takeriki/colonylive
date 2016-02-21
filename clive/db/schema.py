@@ -69,5 +69,41 @@ class Scanner(Table):
              "min_grows"]
 
 
+class Colony(Table):
+    tablename = "colony"
+    items = ["id",
+             "exp_id",
+             "col",
+             "row",
+             "location",
+             "areas",
+             "masss",
+             "cmasss"]
+
+
+class Growth(Table):
+    tablename = "growth"
+    items = ["id",
+             "exp_id",
+             "col",
+             "row",
+             "con",
+             "ltg",
+             "mgr",
+             "spg"]
+
+
+class Ngrowth(Table):
+    tablename = "ngrowth"
+    items = ["id",
+             "exp_id",
+             "col",
+             "row",
+             "con",
+             "ltg",
+             "mgr",
+             "spg"]
+
+
 if __name__ == "__main__":
     pass

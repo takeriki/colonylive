@@ -150,7 +150,6 @@ class Table():
         cont = ["'%s'" % self.__dict__[i]
                     for i in self.items]
         sql += " (%s)" % ", ".join(cont)
-        print sql
         db = Database()
         db.execute_sqls(self.tablename, [sql])
 
@@ -175,7 +174,7 @@ class Table():
             self.id = 1
         else:
             self.id = res + 1
-
+    
 
     def clean(self):
         #for item in self.items:
@@ -185,6 +184,17 @@ class Table():
         "INSERT INTO scanner (id) VALUES (%s)" % self.id]
         db = Database()
         db.execute_sqls(self.tablename, sqls)
+
+
+def get_maxid(table):
+    db = Database()
+    sql = "SELECT MAX(id) FROM %s" % table
+    db.cur.execute(sql)
+    res = db.cur.fetchone()[0]
+    if res == None:
+        return 0
+    return res
+
 
 
 def does_db_have_data(db, table, name_pos, data):
